@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="39" height="23" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="dirt" tilewidth="16" tileheight="16">
+  <image source="../../phaser-examples/examples/assets/games/starstruck/tiles-1.png" width="272" height="64"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="39" height="23">
+  <data encoding="base64" compression="zlib">
+   eJzVlFsKxDAIRd1D2yV0/1sc5qMQxMfROoG5EJKo0asYTxE5l3Wp+3eJIdtlZyHSTSLj4OW1e/e4WJx3IIrfzSeqd9U+imvpKKbqXuFWzTuK1a3fv9dN3+lfon2ZcdP8vbzegvrP8iB91eW2K96vUO2HiXief9rLlq9pbpkdmc+rbfWfHsa5Ei/Kh9aVyj095ZbJSR/Sd5k8iuGhwq3r15t5nXo+9/vFe81DDJ3OYxq0F9ZzlJ+3k7lY+f+aW4bp+UbsyKK203YfEAQdJA==
+  </data>
+ </layer>
+</map>

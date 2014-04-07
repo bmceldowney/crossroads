@@ -1,17 +1,36 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
+var XRoads = {};
 
-function preload () {
+(function () {
+    var game = XRoads.game = new Phaser.Game(624, 368, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
+    XRoads.easystar = new EasyStar.js();
+    var creeps = [];
 
-}
+    function preload () {
+        XRoads.Creep.preload();
+        XRoads.Map.preload();
+    }
 
-function create () {
+    function create () {
+        XRoads.Map.create();
+        for (var i = 0; i < 10; i++) {
+            var creep = new XRoads.Creep();
 
-}
+            creep.create();
+            creeps.push(creep);
+        }
+    }
 
-function update () {
+    function update () {
+        creeps.forEach(function (creep) {
+            creep.update();
+        });
+    }
 
-}
+    function render () {
+        creeps.forEach(function (creep) {
+            creep.render();
+        });
 
-function render () {
-    
-}
+        // XRoads.Grid.render();
+    }
+})();

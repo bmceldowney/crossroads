@@ -7,7 +7,7 @@
 *
 * Phaser - http://www.phaser.io
 *
-* v2.0.3 "Allorallen" - Built: Sun Mar 30 2014 20:39:42
+* v2.0.2 "Ghealdan" - Built: Fri Mar 28 2014 01:30:50
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9611,7 +9611,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 *
 * Phaser - http://www.phaser.io
 *
-* v2.0.3 "Allorallen" - Built: Sun Mar 30 2014 20:39:42
+* v2.0.2 "Ghealdan" - Built: Fri Mar 28 2014 01:30:50
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9654,7 +9654,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 var Phaser = Phaser || {
 
 	VERSION: '<%= version %>',
-	DEV_VERSION: '2.0.3',
+	DEV_VERSION: '2.0.2',
 	GAMES: [],
 
     AUTO: 0,
@@ -70459,7 +70459,7 @@ Phaser.Physics.P2.Body.prototype = {
 
         this.clearShapes();
 
-        return this.addCircle(radius, offsetX, offsetY, rotation);
+        this.addCircle(radius, offsetX, offsetY, rotation);
 
     },
 
