@@ -20,6 +20,8 @@ XRoads.Map = {};
 
         grid = convertLayerToEasyStarGrid(layer);
 
+        XRoads.Grid.collision = grid;
+
         easystar.setGrid(grid);
         easystar.setAcceptableTiles([0]);
     };
