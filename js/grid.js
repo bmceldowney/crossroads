@@ -6,6 +6,8 @@ XRoads.Grid = {};
       , tileWidth = 16
       , tileHeight = 16;
 
+    XRoads.Grid.collision = [];
+
     XRoads.Grid.create = function () {
 
     };
@@ -46,5 +48,13 @@ XRoads.Grid = {};
         var pointY = y * tileHeight;
 
         return {x: pointX, y: pointY};
+    };
+
+    XRoads.Grid.isCollision = function (x, y) {
+        if (XRoads.Grid.collision[y][x]) {
+            return true;
+        } else {
+            return false;
+        }
     };
 })();
