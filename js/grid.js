@@ -4,9 +4,8 @@ XRoads.Grid = {};
     var game = XRoads.game
       , easystar = XRoads.easystar
       , tileWidth = 16
-      , tileHeight = 16;
-
-    XRoads.Grid.collision = [];
+      , tileHeight = 16
+      , collision;
 
     XRoads.Grid.create = function () {
 
@@ -51,10 +50,31 @@ XRoads.Grid = {};
     };
 
     XRoads.Grid.isCollision = function (x, y) {
-        if (XRoads.Grid.collision[y][x]) {
+        if(!collision) throw new Error('XRoads.Grid.isCollision: collision not set');
+        if (collision[y][x]) {
             return true;
         } else {
             return false;
         }
     };
+
+    XRoads.Grid.setPathfinding = function (layer, acceptableTiles) {
+        collision = convertLayerToEasyStarGrid(layer);
+
+        easystar.setGrid(collision);
+        easystar.setAcceptableTiles(acceptableTiles);
+    };
+
+    function convertLayerToEasyStarGrid (layer) {
+        var grid = layer.layer.data.map(function (row) {
+            var gridRow = row.map(function (column) {
+                if (!column) return 0;
+                return column.index;
+            });
+
+            return gridRow;
+        });
+
+        return grid;
+    }
 })();

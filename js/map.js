@@ -2,7 +2,7 @@ XRoads.Map = {};
 
 (function () {
     var game = XRoads.game
-      , easystar = XRoads.easystar
+      , grid = XRoads.Grid
       , map;
 
     XRoads.Map.preload = function () {
@@ -12,30 +12,12 @@ XRoads.Map = {};
 
     XRoads.Map.create = function () {
         var layer
-          , grid;
+          , acceptablePathTiles = [0];
 
         map = game.add.tilemap('map');
         map.addTilesetImage('dirt', 'tiles');
         layer = map.createLayer('Tile Layer 1');
 
-        grid = convertLayerToEasyStarGrid(layer);
-
-        XRoads.Grid.collision = grid;
-
-        easystar.setGrid(grid);
-        easystar.setAcceptableTiles([0]);
+        grid.setPathfinding(layer, acceptablePathTiles);
     };
-
-    function convertLayerToEasyStarGrid (layer) {
-        var grid = layer.layer.data.map(function (row) {
-            var gridRow = row.map(function (column) {
-                if (!column) return 0;
-                return column.index;
-            });
-
-            return gridRow;
-        });
-
-        return grid;
-    }
 })();
