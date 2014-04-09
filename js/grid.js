@@ -49,6 +49,7 @@ XRoads.Grid = {};
         return {x: pointX, y: pointY};
     };
 
+    // checks the grid tile at x,y to determine if there is a collision or not
     XRoads.Grid.isCollision = function (x, y) {
         if(!collision) throw new Error('XRoads.Grid.isCollision: collision not set');
         if (collision[y][x]) {

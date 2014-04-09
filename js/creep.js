@@ -30,16 +30,17 @@
     XRoads.Creep.prototype.update = function () {
         var x
           , y
-          , directions
-          , direction
           , step
           , that = this;
 
         function findDirection(x, y) {
-            var directions = [{ x: x + 16, y: y }, { y: y, x: x - 16 }, { x: x, y: y + 16 }, { x: x, y: y - 16 }, { x: x, y: y - 16 }];
-            var animations = ['walkRight', 'walkLeft', 'walkDown', 'walkUp', 'walkUp'];
+            var directions = [{ x: x + 16, y: y }, { y: y, x: x - 16 }, { x: x, y: y + 16 }, { x: x, y: y - 16 }, { x: x, y: y - 16 }]
+              , direction
+              , gridCoords
+              , animations = ['walkRight', 'walkLeft', 'walkDown', 'walkUp', 'walkUp'];
+
             direction = Math.floor(Math.random() * 4);
-            var gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
+            gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
             if (grid.isCollision(gridCoords.x, gridCoords.y)) {
                 return findDirection(x, y);
             }
@@ -66,6 +67,10 @@
     };
 
     XRoads.Creep.seed = function (config, xBound, yBound) {
+        // config format: { vamp: 4, swamp: 4, random: 25, etc... }
 
+        config.forEach(function (monsterCount) {
+
+        });
     };
 })();
