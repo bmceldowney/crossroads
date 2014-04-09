@@ -1,23 +1,8 @@
 (function () {
     var game = XRoads.game
-      , easystar = XRoads.easystar
-      , grid;
+      , grid = XRoads.Grid;
 
     XRoads.Creep = function () {
-
-    };
-
-    XRoads.Creep.preload = function () {
-        grid = XRoads.Grid;
-
-        game.load.spritesheet('werewolf', 'assets/werewolf.png', 16, 16);
-        game.load.spritesheet('vamp', 'assets/vamp.png', 16, 16);
-        game.load.spritesheet('frank', 'assets/frank.png', 16, 16);
-        game.load.spritesheet('mummy', 'assets/mummy.png', 16, 16);
-        game.load.spritesheet('swamp', 'assets/swamp.png', 16, 16);
-    };
-
-    XRoads.Creep.prototype.create = function () {
         var point = grid.gridToPoint(19, 11);
         this.sprite = game.add.sprite(point.x, point.y, 'werewolf');
 

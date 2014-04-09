@@ -79,6 +79,7 @@
     <Content Include="css\game.css" />
     <Content Include="index.html" />
     <Content Include="js\creep.js" />
+    <Content Include="js\creepManager.js" />
     <Content Include="js\game.js" />
     <Content Include="js\grid.js" />
     <Content Include="js\map.js" />
