@@ -5,10 +5,13 @@ XRoads.Grid = {};
       , easystar = XRoads.easystar
       , tileWidth = 16
       , tileHeight = 16
-      , collision;
+      , collision
+      , columns
+      , rows;
 
     XRoads.Grid.create = function () {
-
+        columns = game.world.width / tileWidth
+        rows = game.world.height / tileHeight;
     };
 
     XRoads.Grid.update = function () {
@@ -18,9 +21,7 @@ XRoads.Grid = {};
     XRoads.Grid.render = function () {
         if (!game) throw new Error("XRoads.Grid: attempted to render before initialization.");
 
-        var columns = game.world.width / tileWidth
-          , rows = game.world.height / tileHeight
-          , line;
+        var line;
 
         for (var i = columns - 1; i >= 0; i--) {
             line = new Phaser.Line(i * tileWidth, 0, i * tileWidth, game.world.height);
@@ -32,6 +33,14 @@ XRoads.Grid = {};
             game.debug.geom(line);
         }
     };
+
+    XRoads.Grid.getColumns = function () {
+        return columns;
+    }
+
+    XRoads.Grid.getRows = function () {
+        return rows;
+    }
 
     // converts a point to grid coordinates
     XRoads.Grid.pointToGrid = function (x, y) {
@@ -51,7 +60,10 @@ XRoads.Grid = {};
 
     // checks the grid tile at x,y to determine if there is a collision or not
     XRoads.Grid.isCollision = function (x, y) {
-        if(!collision) throw new Error('XRoads.Grid.isCollision: collision not set');
+        if (!collision) throw new Error('XRoads.Grid.isCollision: collision not set');
+        if (y >= collision.length || y < 0) return true;
+        if (x >= collision[y].length || x < 0) return true;
+
         if (collision[y][x]) {
             return true;
         } else {

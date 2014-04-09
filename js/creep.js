@@ -2,9 +2,9 @@
     var game = XRoads.game
       , grid = XRoads.Grid;
 
-    XRoads.Creep = function () {
-        var point = grid.gridToPoint(19, 11);
-        this.sprite = game.add.sprite(point.x, point.y, 'werewolf');
+    XRoads.Creep = function (type, x, y) {
+        var point = grid.gridToPoint(x, y);
+        this.sprite = game.add.sprite(point.x, point.y, type);
 
         this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
         this.sprite.animations.add('walkRight', [3, 4, 5], 6, true);
@@ -48,13 +48,5 @@
 
     XRoads.Creep.prototype.render = function () {
 
-    };
-
-    XRoads.Creep.seed = function (config, xBound, yBound) {
-        // config format: { vamp: 4, swamp: 4, random: 25, etc... }
-
-        config.forEach(function (monsterCount) {
-
-        });
     };
 })();
