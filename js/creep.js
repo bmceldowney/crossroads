@@ -4,7 +4,7 @@
       , grid;
 
     XRoads.Creep = function () {
-        this.tween;
+
     };
 
     XRoads.Creep.preload = function () {
@@ -28,20 +28,23 @@
     };
 
     XRoads.Creep.prototype.update = function () {
-        var x;
-        var y;
-        var directions;
-        var direction;
-        var step;
+        var x
+          , y
+          , directions
+          , direction
+          , step
+          , that = this;
 
         function findDirection(x, y) {
             var directions = [{ x: x + 16, y: y }, { y: y, x: x - 16 }, { x: x, y: y + 16 }, { x: x, y: y - 16 }, { x: x, y: y - 16 }];
+            var animations = ['walkRight', 'walkLeft', 'walkDown', 'walkUp', 'walkUp'];
             direction = Math.floor(Math.random() * 4);
             var gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
             if (grid.isCollision(gridCoords.x, gridCoords.y)) {
                 return findDirection(x, y);
             }
 
+            that.sprite.animations.play(animations[direction]);
             return directions[direction];
         }
 
@@ -51,17 +54,18 @@
 
             step = findDirection(x, y);
 
-            this.tween = game.add.tween(this.sprite).to(step, 50, null, true);
+            this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
             this.tween.onComplete.add(function (tween) {
                 this.tween = null;
-            }, this)
+            }, this);
         }
-
-
-        this.sprite.animations.play('walkLeft');
     };
 
     XRoads.Creep.prototype.render = function () {
+
+    };
+
+    XRoads.Creep.seed = function (config, xBound, yBound) {
 
     };
 })();
