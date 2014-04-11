@@ -9,10 +9,23 @@ XRoads.CreepManager.prototype = {
 
         for (var i = 0; i < 60; i++) {
             type = types[Math.floor(Math.random() * 5)];
-            x = Math.floor(Math.random() * XRoads.Grid.getColumns());
-            y = Math.floor(Math.random() * XRoads.Grid.getRows());
+            getStartingLocation();
 
             this._add(type, x, y);
+
+        }
+
+        function getStartingLocation() {
+            var node;
+            x = Math.floor(Math.random() * XRoads.Grid.getColumns());
+            y = Math.floor(Math.random() * XRoads.Grid.getRows());
+            node = x * y;
+
+            if (XRoads.GridNodes.isLocked(node)) {
+                getStartingLocation();
+            };
+
+            return;
         }
     },
 

@@ -22,7 +22,6 @@
             y = this.sprite.y;
 
             step = this.findDirection(x, y);
-
             this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
             this.tween.onComplete.add(function (tween) {
                 this.tween = null;
@@ -36,14 +35,28 @@
           , gridCoords
           , animations = ['walkRight', 'walkLeft', 'walkDown', 'walkUp', 'walkUp'];
 
-        direction = Math.floor(Math.random() * 4);
-        gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
+        //direction = Math.floor(Math.random() * 4);
+        gridCoords = grid.pointToGrid(x, y);
+        //gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
+        
+        var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
+        //var nodeNum = gridCoords.x * gridCoords.y;
+        var dNode = XRoads.GridNodes.randomAvailableFromNode(node);
+        //direction.x = dNode.xPos;
+        //direction.y = dNode.yPos;
+        //return direction;
+        return { x: dNode.x, y: dNode.y };
+        //return dNode;
+        /*
         if (grid.isCollision(gridCoords.x, gridCoords.y)) {
             return this.findDirection(x, y);
         }
 
+
+
         this.sprite.animations.play(animations[direction]);
         return directions[direction];
+        */
     };
 
     XRoads.Creep.prototype.render = function () {
