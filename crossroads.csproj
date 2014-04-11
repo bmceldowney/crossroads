@@ -82,6 +82,7 @@
     <Content Include="js\creepManager.js" />
     <Content Include="js\game.js" />
     <Content Include="js\grid.js" />
+    <Content Include="js\gridNodes.js" />
     <Content Include="js\map.js" />
     <Content Include="Web.config" />
   </ItemGroup>

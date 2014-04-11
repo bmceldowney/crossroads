@@ -18,6 +18,7 @@ var XRoads = {};
     function create() {
         XRoads.Map.create();
         XRoads.Grid.create();
+        XRoads.GridNodes.create(XRoads.Grid.getColumns(), XRoads.Grid.getRows(), 16);
         creeps = new XRoads.CreepManager(game);
         creeps.populate();
     }
