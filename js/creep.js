@@ -6,12 +6,24 @@
         var point = grid.gridToPoint(x, y);
         this.sprite = game.add.sprite(point.x, point.y, type);
         
+        //switch (type) {
+        //    case 'werewolf':
+        //        initWolf.call(this);
+        //        break;
+        //    default:
+        //        break;
+        //}
+
         this.moving = false;
         this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
         this.sprite.animations.add('walkRight', [3, 4, 5], 6, true);
         this.sprite.animations.add('walkDown', [6, 7, 8], 6, true);
         this.sprite.animations.add('walkLeft', [9, 10, 11], 6, true);
     };
+
+    //function intWolf() {
+    //    this.speed =5;
+    //}
 
     XRoads.Creep.prototype.update = function () {
         //the movement is divided into 2 steps & tweens.
@@ -21,7 +33,8 @@
           , y
           , move
           //tweens can use relative movement coordinates
-          , step = {x: '+0', y: '+0'};
+          , step = { x: '+0', y: '+0' }
+          , shift = { x: 0, y: 0 };
 
         if (!this.moving) {
             x = this.sprite.x;
@@ -31,44 +44,55 @@
 
             switch (move.letter) {
                 case 'n' :
-                    step.y = '+8';
+                    step.y = '-8';
+                    shift.y = -8;
                     break;
                 case 's' :
-                    step.y = '-8';
+                    step.y = '+8';
+                    shift.y = 8;
                     break;
                 case 'e' :
                     step.x = '+8';
+                    shift.x = 8;
                     break;
                 case 'w' :
                     step.x = '-8';
+                    shift.x = -8;
                     break;
                 default :
                     step.x = '+0';
                     step.y = '+0';
                     break;
             }
+            //Kludgy wrap detection...
+            if (Math.abs(move.x - x) < 160 && Math.abs(move.y - y) < 160) {
+                this.tween1 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween1.onComplete.add(onStepComplete, this);
+            } else {
+                //World wrap occurs
+                this.tweenWrap = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tweenWrap.onComplete.add(onWrapComplete, this);
+            }
 
-            this.tween1 = game.add.tween(this.sprite).to(step, 500, null, true);
-            this.tween1.onComplete.add(onStepComplete, this);
+            
+            function onWrapComplete() {
+                if (Math.abs(move.x - x)) {
+                    this.sprite.x = move.x - shift.x;
+                } else {
+                    this.sprite.y = move.y - shift.y;
+                }
+                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween2.onComplete.add(onDoneComplete, this);
+            };
 
             function onStepComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, 4500, null, true);
+                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
             };
             function onDoneComplete() {
                 this.moving = false;
             };
-            //if (Math.abs(step.x - x) < 100 && Math.abs(step.y - y) < 100) {
-            //    this.tween1 = game.add.tween(this.sprite).to(shuf, 500, null, true);
-            //} else {
-            //    //World wrap occurs
-            //    if (Math.abs(step.x - x)) {
-            //        this.sprite.x = step.x;
-            //    } else {
-            //        this.sprite.y = step.y;
-            //    }
-            //    this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
-            //}
+            
 
             
 

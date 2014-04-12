@@ -77,6 +77,7 @@
             nodes[k].se = nodes[k].s.e;
 
         }
+
         XRoads.GridNodes.addWalls();
     };
     //We add an isWall & isOccupied to each node
