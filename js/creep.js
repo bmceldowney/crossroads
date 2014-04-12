@@ -15,14 +15,30 @@
     XRoads.Creep.prototype.update = function () {
         var x
           , y
-          , step;
+          , step
+          , shuf;
 
         if (!this.tween) {
             x = this.sprite.x;
             y = this.sprite.y;
 
             step = this.findDirection(x, y);
-            this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
+            //shuf = { x: 0, y: 0 };
+            //shuf.x = (step.x - x) * .5 + x;
+            //shuf.y = (step.y - y) * .5 + y;
+
+            if (Math.abs(step.x - x) < 100 && Math.abs(step.y - y) < 100) {
+                this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
+            } else {
+                //World wrap occurs
+                if (Math.abs(step.x - x)) {
+                    this.sprite.x = step.x;
+                } else {
+                    this.sprite.y = step.y;
+                }
+                this.tween = game.add.tween(this.sprite).to(step, 500, null, true);
+            }
+            
             this.tween.onComplete.add(function (tween) {
                 this.tween = null;
             }, this);
@@ -30,9 +46,7 @@
     };
 
     XRoads.Creep.prototype.findDirection = function (x, y) {
-        var directions = [{ x: x + 16, y: y }, { y: y, x: x - 16 }, { x: x, y: y + 16 }, { x: x, y: y - 16 }, { x: x, y: y - 16 }]
-          , direction
-          , gridCoords
+        var gridCoords
           , animations = {e: 'walkRight', w: 'walkLeft', s: 'walkDown', n: 'walkUp'};
 
         gridCoords = grid.pointToGrid(x, y);
@@ -41,7 +55,7 @@
 
         this.sprite.animations.play(animations[dir.letter]);
 
-        return { x:dir.x, y:dir.y };
+        return dir;
         //returndir;
         /*
         if (grid.isCollision(gridCoords.x, gridCoords.y)) {
