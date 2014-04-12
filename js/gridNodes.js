@@ -152,8 +152,7 @@
         if (!letter) {
             return XRoads.GridNodes.randomAvailableFromNode(node);
         }
-        
-        if (!node[letter].isWall && !node[letter].isOccupied) {
+        if (!node[letter].isWall && !node[letter].isOccupied && Math.random() * 16 < 15) {
             var dir = { x: 0, y: 0 };
             dir.x = node[letter].xPos;
             dir.y = node[letter].yPos;

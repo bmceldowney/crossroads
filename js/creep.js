@@ -64,6 +64,24 @@
                     step.y = '+0';
                     break;
             }
+            //Some browsers want these functions defined early.(firefox28.0)
+            function onStepComplete() {
+                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween2.onComplete.add(onDoneComplete, this);
+            };
+            function onDoneComplete() {
+                this.moving = false;
+            };
+            function onWrapComplete() {
+                if (Math.abs(move.x - x)) {
+                    this.sprite.x = move.x - shift.x;
+                } else {
+                    this.sprite.y = move.y - shift.y;
+                }
+                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween2.onComplete.add(onDoneComplete, this);
+            };
+
             //Kludgy wrap detection...
             if (Math.abs(move.x - x) < 160 && Math.abs(move.y - y) < 160) {
                 this.tween1 = game.add.tween(this.sprite).to(step, 250, null, true);
@@ -75,25 +93,7 @@
             }
 
             
-            function onWrapComplete() {
-                if (Math.abs(move.x - x)) {
-                    this.sprite.x = move.x - shift.x;
-                } else {
-                    this.sprite.y = move.y - shift.y;
-                }
-                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
-                this.tween2.onComplete.add(onDoneComplete, this);
-            };
-
-            function onStepComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
-                this.tween2.onComplete.add(onDoneComplete, this);
-            };
-            function onDoneComplete() {
-                this.moving = false;
-            };
             
-
             
 
             //this.tween.onComplete.add(function (tween) {
