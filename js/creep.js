@@ -13,7 +13,7 @@
         //    default:
         //        break;
         //}
-
+        this.lastDir = { x: null, y: null, letter: null };
         this.moving = false;
         this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
         this.sprite.animations.add('walkRight', [3, 4, 5], 6, true);
@@ -109,8 +109,9 @@
 
         gridCoords = grid.pointToGrid(x, y);
         var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
-        var dir = XRoads.GridNodes.randomAvailableFromNode(node);
-
+        //var dir = XRoads.GridNodes.randomAvailableFromNode(node);
+        var dir = XRoads.GridNodes.walkFromNodeToLetter(node, this.lastDir.letter)
+        this.lastDir.letter = dir.letter;
         this.sprite.animations.play(animations[dir.letter]);
 
         return dir;

@@ -148,5 +148,21 @@
         }
     };
 
+    XRoads.GridNodes.walkFromNodeToLetter = function (node, letter) {
+        if (!letter) {
+            return XRoads.GridNodes.randomAvailableFromNode(node);
+        }
+        
+        if (!node[letter].isWall && !node[letter].isOccupied) {
+            var dir = { x: 0, y: 0 };
+            dir.x = node[letter].xPos;
+            dir.y = node[letter].yPos;
+            dir.letter =letter;
+            return dir;
+        } else {
+            return XRoads.GridNodes.randomAvailableFromNode(node);
+        }
+    };
+
 
 })();
