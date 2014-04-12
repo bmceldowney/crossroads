@@ -33,20 +33,16 @@
         var directions = [{ x: x + 16, y: y }, { y: y, x: x - 16 }, { x: x, y: y + 16 }, { x: x, y: y - 16 }, { x: x, y: y - 16 }]
           , direction
           , gridCoords
-          , animations = ['walkRight', 'walkLeft', 'walkDown', 'walkUp', 'walkUp'];
+          , animations = {e: 'walkRight', w: 'walkLeft', s: 'walkDown', n: 'walkUp'};
 
-        //direction = Math.floor(Math.random() * 4);
         gridCoords = grid.pointToGrid(x, y);
-        //gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
-        
         var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
-        //var nodeNum = gridCoords.x * gridCoords.y;
-        var dNode = XRoads.GridNodes.randomAvailableFromNode(node);
-        //direction.x = dNode.xPos;
-        //direction.y = dNode.yPos;
-        //return direction;
-        return { x: dNode.x, y: dNode.y };
-        //return dNode;
+        var dir = XRoads.GridNodes.randomAvailableFromNode(node);
+
+        this.sprite.animations.play(animations[dir.letter]);
+
+        return { x:dir.x, y:dir.y };
+        //returndir;
         /*
         if (grid.isCollision(gridCoords.x, gridCoords.y)) {
             return this.findDirection(x, y);
