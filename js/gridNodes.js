@@ -22,60 +22,60 @@
         for (var j = 0; j < a; j++) {
             //d is basically the row number.
             var d = Math.floor(j / w);
-				
+
             //node.next -- the last node.next is null
-            if (j < a-1){
+            if (j < a - 1) {
                 nodes[j].next = nodes[j + 1];
             }
-				
+
             //node.prev -- the first node.prev is null
-            if (j > 0){
+            if (j > 0) {
                 nodes[j].prev = nodes[j - 1];
             }
-				
+
             //NORTH (n)
             if (d) {
-                nodes[j].n = nodes[j - w]; 
+                nodes[j].n = nodes[j - w];
             } else {
                 //world wraps to the bottom
                 nodes[j].n = nodes[a - w + j];
             }
-				
+
             //SOUTH (s)
             if (d < h - 1) {
-                nodes[j].s = nodes[j+w];
+                nodes[j].s = nodes[j + w];
             } else {
                 //World wraps to the top tooo!
                 nodes[j].s = nodes[j % w];
             }
-				
+
             //EAST (e)
-            if ((j+1) % w) {
+            if ((j + 1) % w) {
                 nodes[j].e = nodes[j + 1];
-					
+
             } else {
                 //World Wraps east
                 nodes[j].e = nodes[j - w + 1];
             }
-				
+
             //WEST
             if (j % w) {
                 nodes[j].w = nodes[j - 1];
-					 
+
             } else {
                 //World Wraps Westward
                 nodes[j].w = nodes[j + w - 1];
             }
         }
-			
+
         //Add references to nw, sw, ne, se
         for (var k = 0; k < a; k++) {
             nodes[k].nw = nodes[k].n.w;
             nodes[k].sw = nodes[k].s.w;
-				
+
             nodes[k].ne = nodes[k].n.e;
             nodes[k].se = nodes[k].s.e;
-				
+
         }
         XRoads.GridNodes.addWalls();
     };
@@ -93,39 +93,48 @@
     };
 
     XRoads.GridNodes.getNodeFromCoords = function (x, y) {
-        return nodes[x * y];
+        return nodes[(y * width) + x];
+        //return nodes[x * y];
     };
 
-    XRoads.GridNodes.randomAvailableNode = function (nn) {
+    XRoads.GridNodes.isLocked = function (nn) {
+        return (!nodes[nn].n.isWall && !nodes[nn].s.isWall && !nodes[nn].e.isWall && !nodes[nn].w.isWall);
+    };
+
+    XRoads.GridNodes.randomAvailableFromNodeNumber = function (nn) {
+        return XRoads.GridNodes.randomAvailableFromNode(nodes[nn]);
+    };
+
+    XRoads.GridNodes.randomAvailableFromNode = function (node) {
         var directions = [];
         var m = 0;
-        
-        if (!nodes[nn].n.isWall && !nodes[nn].n.isOccupied) {
-            directions.push(nodes[nn].n);
+
+        if (!node.n.isWall && !node.n.isOccupied) {
+            directions.push(node.n);
             m++;
         }
-        if (!nodes[nn].s.isWall && !nodes[nn].s.isOccupied) {
-            directions.push(nodes[nn].s);
+        if (!node.s.isWall && !node.s.isOccupied) {
+            directions.push(node.s);
             m++;
         }
-        if (!nodes[nn].e.isWall && !nodes[nn].e.isOccupied) {
-            directions.push(nodes[nn].e);
+        if (!node.e.isWall && !node.e.isOccupied) {
+            directions.push(node.e);
             m++;
         }
-        if (!nodes[nn].w.isWall && !nodes[nn].w.isOccupied) {
-            directions.push(nodes[nn].w);
+        if (!node.w.isWall && !node.w.isOccupied) {
+            directions.push(node.w);
             m++;
         }
         //Math.random() will never return 1;
         var r = Math.floor(Math.random() * m);
 
-        var pos = {x: 0, y: 0};
+        var pos = { x: 0, y: 0 };
         pos.x = directions[r].xPos;
         pos.y = directions[r].yPos;
         //return { x: directions[r].xPos, y: directions[r].yPos };
         return pos;
         //return directions[r];
-        
+
     };
 
 

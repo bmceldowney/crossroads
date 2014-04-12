@@ -39,9 +39,9 @@
         gridCoords = grid.pointToGrid(x, y);
         //gridCoords = grid.pointToGrid(directions[direction].x, directions[direction].y);
         
-        //var node = XRoads.GridNodes.getNodeFromCoords(x, y);
-        var nodeNum = gridCoords.x * gridCoords.y;
-        var dNode = XRoads.GridNodes.randomAvailableNode(nodeNum);
+        var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
+        //var nodeNum = gridCoords.x * gridCoords.y;
+        var dNode = XRoads.GridNodes.randomAvailableFromNode(node);
         //direction.x = dNode.xPos;
         //direction.y = dNode.yPos;
         //return direction;
