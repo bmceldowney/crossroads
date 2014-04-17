@@ -17,8 +17,9 @@
 
     XRoads.Creep.prototype.update = function () {
         //the movement is divided into 2 steps & tweens.
-        //this is so creeps only occupy a node the instant the sprite cross into it.
-        //Also, it will help us with better looking world wraps.
+        //Creeps occupy a node the instant they decide to go there (before tween1). 
+        //Creeps leave their node after tween1 completes, or - the moment they leave the old space.
+        //Also, 2 steps/tweens helps us with better looking world wrapping.
         var x
           , y
           , dir
@@ -59,13 +60,14 @@
             }
             //Some browsers want these onComplete functions defined early.(firefox28.0)
             function onStepComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween2 = game.add.tween(this.sprite).to(step, Math.random()*250, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
-            };
-            function onDoneComplete() {
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
                 }
+            };
+            function onDoneComplete() {
+                
                 this.moving = false;
             };
             function onWrapComplete() {
@@ -76,11 +78,14 @@
                 }
                 this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
+                if (dir.letter) {
+                    dir.currentNode.isOccupied = false;
+                }
             };
 
             //Kludgy wrap detection...
             if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {
-                this.tween1 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween1 = game.add.tween(this.sprite).to(step, Math.random() * 250, null, true);
                 this.tween1.onComplete.add(onStepComplete, this);
             } else {
                 //World wrap occurs
