@@ -64,7 +64,7 @@
                     step.y = '+0';
                     break;
             }
-            //Some browsers want these functions defined early.(firefox28.0)
+            //Some browsers want these onComplete functions defined early.(firefox28.0)
             function onStepComplete() {
                 this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
