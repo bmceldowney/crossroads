@@ -1,16 +1,17 @@
 XRoads.Grid = {};
 
 (function () {
-    var game = XRoads.game
-      , easystar = XRoads.easystar
+    var easystar = XRoads.easystar
       , tileWidth = 16
       , tileHeight = 16
       , collision
       , columns
-      , rows;
+      , rows
+      , game;
 
-    XRoads.Grid.create = function () {
-        columns = game.world.width / tileWidth
+    XRoads.Grid.create = function (_game) {
+        game = _game;
+        columns = game.world.width / tileWidth;
         rows = game.world.height / tileHeight;
     };
 
@@ -36,11 +37,11 @@ XRoads.Grid = {};
 
     XRoads.Grid.getColumns = function () {
         return columns;
-    }
+    };
 
     XRoads.Grid.getRows = function () {
         return rows;
-    }
+    };
 
     // converts a point to grid coordinates
     XRoads.Grid.pointToGrid = function (x, y) {
