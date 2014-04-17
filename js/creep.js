@@ -1,18 +1,12 @@
 (function () {
-    var game = XRoads.game
+    var game
       , grid = XRoads.Grid;
 
-    XRoads.Creep = function (type, x, y) {
+    XRoads.Creep = function (type, x, y, _game) {
         var point = grid.gridToPoint(x, y);
+        game = _game;
+
         this.sprite = game.add.sprite(point.x, point.y, type);
-        
-        //switch (type) {
-        //    case 'werewolf':
-        //        initWolf.call(this);
-        //        break;
-        //    default:
-        //        break;
-        //}
         this.lastDir = { x: null, y: null, letter: null };
         this.moving = false;
         this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
@@ -20,10 +14,6 @@
         this.sprite.animations.add('walkDown', [6, 7, 8], 6, true);
         this.sprite.animations.add('walkLeft', [9, 10, 11], 6, true);
     };
-
-    //function intWolf() {
-    //    this.speed =5;
-    //}
 
     XRoads.Creep.prototype.update = function () {
         //the movement is divided into 2 steps & tweens.

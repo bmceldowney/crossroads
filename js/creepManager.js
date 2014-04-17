@@ -23,7 +23,7 @@ XRoads.CreepManager.prototype = {
 
             if (XRoads.GridNodes.isLocked(node)) {
                 getStartingLocation();
-            };
+            }
 
             return;
         }
@@ -42,7 +42,7 @@ XRoads.CreepManager.prototype = {
     },
 
     _add: function (type, x, y) {
-        this._creeps.push(new XRoads.Creep(type, x, y));
+        this._creeps.push(new XRoads.Creep(type, x, y, this.game));
     },
 
     _creeps: []
