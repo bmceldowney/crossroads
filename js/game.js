@@ -7,11 +7,11 @@ window.onload = function () {
 
     // Game States
     game.state.add('boot', XRoads.Boot);
-    // game.state.add('world', require('./js/states/world'));
+    game.state.add('world', XRoads.World);
     // game.state.add('menu', require('./js/states/menu'));
     game.state.add('combat', XRoads.Combat);
     // game.state.add('preload', require('./js/states/preload'));
 
 
-    game.state.start('combat');
+    game.state.start('world');
 };
