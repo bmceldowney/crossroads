@@ -13,5 +13,5 @@ window.onload = function () {
     // game.state.add('preload', require('./js/states/preload'));
 
 
-    game.state.start('world');
+    game.state.start('combat');
 };
