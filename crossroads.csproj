@@ -84,6 +84,11 @@
     <Content Include="js\grid.js" />
     <Content Include="js\gridNodes.js" />
     <Content Include="js\map.js" />
+    <Content Include="js\states\boot.js" />
+    <Content Include="js\states\combat.js" />
+    <Content Include="js\states\menu.js" />
+    <Content Include="js\states\preload.js" />
+    <Content Include="js\states\world.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

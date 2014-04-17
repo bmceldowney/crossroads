@@ -7,7 +7,7 @@ XRoads.CreepManager.prototype = {
         var type, x, y
           , types = ['werewolf', 'swamp', 'vamp', 'frank', 'mummy'];
 
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 50; i++) {
             type = types[Math.floor(Math.random() * 5)];
             getStartingLocation();
 

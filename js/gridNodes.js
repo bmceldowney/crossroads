@@ -133,7 +133,7 @@
         
         if (m === 0) {
             //No where to go. Stay put
-            return { x: node.xPos, y: node.yPos };
+            return { x: node.xPos, y: node.yPos, letter: null, currentNode: node };
         } else {
             //Math.random() will never return 1;
             var r = Math.floor(Math.random() * m);
@@ -142,9 +142,8 @@
             dir.x = directions[r].xPos;
             dir.y = directions[r].yPos;
             dir.letter = dLetter[r];
-            //return { x: directions[r].xPos, y: directions[r].yPos,  };
+            dir.currentNode = node;
             return dir;
-            //return directions[r];
         }
     };
 
@@ -156,7 +155,8 @@
             var dir = { x: 0, y: 0 };
             dir.x = node[letter].xPos;
             dir.y = node[letter].yPos;
-            dir.letter =letter;
+            dir.letter = letter;
+            dir.currentNode = node;
             return dir;
         } else {
             return XRoads.GridNodes.randomAvailableFromNode(node);

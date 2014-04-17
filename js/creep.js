@@ -7,7 +7,7 @@
         game = _game;
 
         this.sprite = game.add.sprite(point.x, point.y, type);
-        this.lastDir = { x: null, y: null, letter: null };
+        this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
         this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
         this.sprite.animations.add('walkRight', [3, 4, 5], 6, true);
@@ -21,7 +21,7 @@
         //Also, it will help us with better looking world wraps.
         var x
           , y
-          , move
+          , dir
           //tweens can use relative movement coordinates
           , step = { x: '+0', y: '+0' }
           , shift = { x: 0, y: 0 };
@@ -30,9 +30,12 @@
             x = this.sprite.x;
             y = this.sprite.y;
             this.moving = true;
-            move = this.findDirection(x, y);
+            dir = this.findDirection(x, y);
+            if (dir.currentNode[dir.letter]) {
+                dir.currentNode[dir.letter].isOccupied = true;
+            }
 
-            switch (move.letter) {
+            switch (dir.letter) {
                 case 'n' :
                     step.y = '-8';
                     shift.y = -8;
@@ -60,20 +63,23 @@
                 this.tween2.onComplete.add(onDoneComplete, this);
             };
             function onDoneComplete() {
+                if (dir.letter) {
+                    dir.currentNode.isOccupied = false;
+                }
                 this.moving = false;
             };
             function onWrapComplete() {
-                if (Math.abs(move.x - x)) {
-                    this.sprite.x = move.x - shift.x;
+                if (Math.abs(dir.x - x)) {
+                    this.sprite.x = dir.x - shift.x;
                 } else {
-                    this.sprite.y = move.y - shift.y;
+                    this.sprite.y = dir.y - shift.y;
                 }
                 this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
             };
 
             //Kludgy wrap detection...
-            if (Math.abs(move.x - x) < 160 && Math.abs(move.y - y) < 160) {
+            if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {
                 this.tween1 = game.add.tween(this.sprite).to(step, 250, null, true);
                 this.tween1.onComplete.add(onStepComplete, this);
             } else {
@@ -82,13 +88,6 @@
                 this.tweenWrap.onComplete.add(onWrapComplete, this);
             }
 
-            
-            
-            
-
-            //this.tween.onComplete.add(function (tween) {
-            //    this.tween = null;
-            //}, this);
         }
     };
     
@@ -99,23 +98,14 @@
 
         gridCoords = grid.pointToGrid(x, y);
         var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
-        //var dir = XRoads.GridNodes.randomAvailableFromNode(node);
-        var dir = XRoads.GridNodes.walkFromNodeToLetter(node, this.lastDir.letter)
+        //var dir = XRoads.GridNodes.randomAvailableFromNode(node); //move randomly
+        var dir = XRoads.GridNodes.walkFromNodeToLetter(node, this.lastDir.letter);
         this.lastDir.letter = dir.letter;
+        dir.currentNode = node;
+        this.lastDir.currentNode = node;
         this.sprite.animations.play(animations[dir.letter]);
 
         return dir;
-        //returndir;
-        /*
-        if (grid.isCollision(gridCoords.x, gridCoords.y)) {
-            return this.findDirection(x, y);
-        }
-
-
-
-        this.sprite.animations.play(animations[direction]);
-        return directions[direction];
-        */
     };
 
     XRoads.Creep.prototype.render = function () {
