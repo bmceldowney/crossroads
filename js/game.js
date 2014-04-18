@@ -3,7 +3,7 @@ XRoads.easystar = new EasyStar.js();
 
 //global variables
 window.onload = function () {
-    var game = new Phaser.Game(624, 368, Phaser.AUTO, 'game');
+    var game = XRoads.game = new Phaser.Game(624, 368, Phaser.AUTO, 'game');
 
     // Game States
     game.state.add('boot', XRoads.Boot);
@@ -11,7 +11,6 @@ window.onload = function () {
     // game.state.add('menu', require('./js/states/menu'));
     game.state.add('combat', XRoads.Combat);
     // game.state.add('preload', require('./js/states/preload'));
-
 
     game.state.start('combat');
 };

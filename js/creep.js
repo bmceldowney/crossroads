@@ -2,17 +2,18 @@
     var game
       , grid = XRoads.Grid;
 
-    XRoads.Creep = function (type, x, y, _game) {
+    XRoads.Creep = function (x, y) {
         var point = grid.gridToPoint(x, y);
-        game = _game;
+        game = XRoads.game;
+        var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
 
-        this.sprite = game.add.sprite(point.x, point.y, type);
+        this.sprite = game.add.sprite(point.x, point.y, this.type);
         this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
-        this.sprite.animations.add('walkUp', [0, 1, 2], 6, true);
-        this.sprite.animations.add('walkRight', [3, 4, 5], 6, true);
-        this.sprite.animations.add('walkDown', [6, 7, 8], 6, true);
-        this.sprite.animations.add('walkLeft', [9, 10, 11], 6, true);
+        this.sprite.animations.add('walkUp', [0, 1, 2], fps, true);
+        this.sprite.animations.add('walkRight', [3, 4, 5], fps, true);
+        this.sprite.animations.add('walkDown', [6, 7, 8], fps, true);
+        this.sprite.animations.add('walkLeft', [9, 10, 11], fps, true);
     };
 
     XRoads.Creep.prototype.update = function () {
@@ -60,7 +61,7 @@
             }
             //Some browsers want these onComplete functions defined early.(firefox28.0)
             function onStepComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, Math.random()*250, null, true);
+                this.tween2 = game.add.tween(this.sprite).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
@@ -76,7 +77,7 @@
                 } else {
                     this.sprite.y = dir.y - shift.y;
                 }
-                this.tween2 = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tween2 = game.add.tween(this.sprite).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
@@ -85,11 +86,11 @@
 
             //Kludgy wrap detection...
             if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {
-                this.tween1 = game.add.tween(this.sprite).to(step, Math.random() * 250, null, true);
+                this.tween1 = game.add.tween(this.sprite).to(step, this.speed, null, true);
                 this.tween1.onComplete.add(onStepComplete, this);
             } else {
                 //World wrap occurs
-                this.tweenWrap = game.add.tween(this.sprite).to(step, 250, null, true);
+                this.tweenWrap = game.add.tween(this.sprite).to(step, this.speed, null, true);
                 this.tweenWrap.onComplete.add(onWrapComplete, this);
             }
 
