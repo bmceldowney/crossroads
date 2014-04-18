@@ -1,5 +1,10 @@
 ﻿XRoads.CreepManager = function (game) {
     this.game = game;
+    this.game.load.spritesheet('werewolf', 'assets/werewolf.png', 16, 16);
+    this.game.load.spritesheet('vamp', 'assets/vamp.png', 16, 16);
+    this.game.load.spritesheet('frank', 'assets/frank.png', 16, 16);
+    this.game.load.spritesheet('mummy', 'assets/mummy.png', 16, 16);
+    this.game.load.spritesheet('swamp', 'assets/swamp.png', 16, 16);
 };
 
 XRoads.CreepManager.prototype = {
@@ -42,8 +47,38 @@ XRoads.CreepManager.prototype = {
     },
 
     _add: function (type, x, y) {
-        this._creeps.push(new XRoads.Creep(type, x, y, this.game));
+        var creep = XRoads.CreepManager.definitions[type];
+        creep.prototype = Object.create(XRoads.Creep.prototype);
+        this._creeps.push(new creep(x, y));
     },
 
     _creeps: []
+};
+
+XRoads.CreepManager.definitions = {
+    werewolf: function () {
+        this.speed = 200;
+        this.type = 'werewolf';
+        XRoads.Creep.apply(this, arguments);
+    },
+    vamp: function () {
+        this.speed = 300;
+        this.type = 'vamp';
+        XRoads.Creep.apply(this, arguments);
+    },
+    swamp: function () {
+        this.speed = 500;
+        this.type = 'swamp';
+        XRoads.Creep.apply(this, arguments);
+    },
+    mummy: function () {
+        this.speed = 700;
+        this.type = 'mummy';
+        XRoads.Creep.apply(this, arguments);
+    },
+    frank: function () {
+        this.speed = 600;
+        this.type = 'frank';
+        XRoads.Creep.apply(this, arguments);
+    }
 };
