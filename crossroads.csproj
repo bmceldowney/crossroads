@@ -89,6 +89,7 @@
     <Content Include="js\states\menu.js" />
     <Content Include="js\states\preload.js" />
     <Content Include="js\states\world.js" />
+    <None Include="Scripts\_references.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

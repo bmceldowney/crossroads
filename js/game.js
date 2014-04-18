@@ -8,9 +8,9 @@ window.onload = function () {
     // Game States
     game.state.add('boot', XRoads.Boot);
     game.state.add('world', XRoads.World);
-    // game.state.add('menu', require('./js/states/menu'));
+    game.state.add('menu', XRoads.Menu);
     game.state.add('combat', XRoads.Combat);
     // game.state.add('preload', require('./js/states/preload'));
 
-    game.state.start('combat');
+    game.state.start('menu');
 };
