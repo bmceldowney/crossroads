@@ -151,6 +151,11 @@
         if (!letter) {
             return XRoads.GridNodes.randomAvailableFromNode(node);
         }
+
+        if (everyoneHatesFrank(node[letter])) {
+            return { x: node.xPos, y: node.yPos, letter: null, currentNode: node, fight: true, fightLetter: letter };
+        }
+
         if (!node[letter].isWall && !node[letter].isOccupied && Math.random() * 16 < 15) {
             var dir = { x: 0, y: 0 };
             dir.x = node[letter].xPos;
@@ -162,6 +167,14 @@
             return XRoads.GridNodes.randomAvailableFromNode(node);
         }
     };
+
+    everyoneHatesFrank = function (node) {
+        if (node.occupant) {
+            if (node.occupant.type == "frank") {
+                return true;
+            }
+        }
+    }
 
 
 })();

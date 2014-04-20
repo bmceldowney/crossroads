@@ -57,28 +57,38 @@ XRoads.CreepManager.prototype = {
 
 XRoads.CreepManager.definitions = {
     werewolf: function () {
-        this.speed = 200;
+        this.speed = 100;
         this.type = 'werewolf';
+        this.damage = 1;
+        this.life = 2;
         XRoads.Creep.apply(this, arguments);
     },
     vamp: function () {
-        this.speed = 300;
+        this.speed = 200;
         this.type = 'vamp';
+        this.damage = 2;
+        this.life = 3;
         XRoads.Creep.apply(this, arguments);
     },
     swamp: function () {
-        this.speed = 500;
+        this.speed = 300;
         this.type = 'swamp';
+        this.damage = 2;
+        this.life = 4;
         XRoads.Creep.apply(this, arguments);
     },
     mummy: function () {
         this.speed = 700;
         this.type = 'mummy';
+        this.damage = 1;
+        this.life = 6;
         XRoads.Creep.apply(this, arguments);
     },
     frank: function () {
         this.speed = 600;
         this.type = 'frank';
+        this.damage = 2;
+        this.life = 5;
         XRoads.Creep.apply(this, arguments);
     }
 };
