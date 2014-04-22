@@ -5,6 +5,8 @@
     this.game.load.spritesheet('frank', 'assets/frank.png', 16, 16);
     this.game.load.spritesheet('mummy', 'assets/mummy.png', 16, 16);
     this.game.load.spritesheet('swamp', 'assets/swamp.png', 16, 16);
+
+    this._creeps = this.game.add.group();
 };
 
 XRoads.CreepManager.prototype = {
@@ -17,7 +19,6 @@ XRoads.CreepManager.prototype = {
             getStartingLocation();
 
             this._add(type, x, y);
-
         }
 
         function getStartingLocation() {
@@ -34,25 +35,11 @@ XRoads.CreepManager.prototype = {
         }
     },
 
-    update: function () {
-        for (var i = this._creeps.length - 1; i >= 0; i--) {
-            this._creeps[i].update();
-        }
-    },
-
-    render: function () {
-        for (var i = this._creeps.length - 1; i >= 0; i--) {
-            this._creeps[i].render();
-        }
-    },
-
     _add: function (type, x, y) {
         var creep = XRoads.CreepManager.definitions[type];
         creep.prototype = Object.create(XRoads.Creep.prototype);
-        this._creeps.push(new creep(x, y));
-    },
-
-    _creeps: []
+        this._creeps.add(new creep(x, y));
+    }
 };
 
 XRoads.CreepManager.definitions = {

@@ -14,11 +14,10 @@ XRoads.Combat.prototype = {
     },
 
     update: function () {
-        this.creeps.update();
+
     },
 
     render: function () {
-        this.creeps.render();
-        // XRoads.Grid.render();
+
     }
 };

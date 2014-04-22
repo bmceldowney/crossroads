@@ -7,17 +7,21 @@
         game = XRoads.game;
         var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
 
-        this.sprite = game.add.sprite(point.x, point.y, this.type);
+        Phaser.Sprite.call(this, game, point.x, point.y, this.type);
+        game.add.existing(this);
+
         this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
-        this.sprite.animations.add('walkUp', [0, 1, 2, 1], fps, true);
-        this.sprite.animations.add('walkRight', [3, 4, 5, 4], fps, true);
-        this.sprite.animations.add('walkDown', [6, 7, 8, 7], fps, true);
-        this.sprite.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
-        this.sprite.animations.add('fighting', [1, 4, 7, 10], fps, true);
+        this.animations.add('walkUp', [0, 1, 2, 1], fps, true);
+        this.animations.add('walkRight', [3, 4, 5, 4], fps, true);
+        this.animations.add('walkDown', [6, 7, 8, 7], fps, true);
+        this.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
+        this.animations.add('fighting', [1, 4, 7, 10], fps, true);
         //this.sprite.animations.add('death', [12, 13, 14], fps, true);
     };
+
+    XRoads.Creep.prototype = Object.create(Phaser.Sprite.prototype);
 
     XRoads.Creep.prototype.update = function () {
         //the movement is divided into 2 steps & tweens.
@@ -32,8 +36,8 @@
           , shift = { x: 0, y: 0 };
 
         if (!this.moving && !this.isDead) {
-            x = this.sprite.x;
-            y = this.sprite.y;
+            x = this.x;
+            y = this.y;
             this.moving = true;
             dir = this.findDirection(x, y);
             if (dir.currentNode[dir.letter]) {
@@ -65,7 +69,7 @@
             }
             //Some browsers want these onComplete functions defined early.(firefox28.0)
             function onStepComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
@@ -77,24 +81,24 @@
                 this.moving = false;
                 if (this.life < .1) {
                     this.isDead = true;
-                    this.sprite.animations.play('fighting');
+                    this.animations.play('fighting');
                     if (dir.currentNode[dir.letter]){
                         dir.currentNode[dir.letter].occupant = null;
                         dir.currentNode[dir.letter].isOccupied = false;
                     }
                     dir.currentNode.isOccupied = false;
                     dir.currentNode.occupant = null;
-                    //this.kill(this);
-                    this.sprite.kill();
+
+                    this.kill();
                 }
             };
             function onWrapComplete() {
                 if (Math.abs(dir.x - x)) {
-                    this.sprite.x = dir.x - shift.x;
+                    this.x = dir.x - shift.x;
                 } else {
-                    this.sprite.y = dir.y - shift.y;
+                    this.y = dir.y - shift.y;
                 }
-                this.tween2 = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
@@ -102,7 +106,7 @@
                 }
             };
             function onFightComplete() {
-                this.tween2 = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
@@ -111,18 +115,18 @@
                 }
             };
             if (dir.fight) {
-                this.sprite.animations.play('fighting');
+                this.animations.play('fighting');
                 dir.currentNode[dir.fightLetter].occupant.life -= this.damage;
-                this.tweenFight = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                this.tweenFight = game.add.tween(this).to(step, this.speed, null, true);
                 this.tweenFight.onComplete.add(onFightComplete, this);
             } else {
                 //Kludgy wrap detection...
                 if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {
-                    this.tween1 = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                    this.tween1 = game.add.tween(this).to(step, this.speed, null, true);
                     this.tween1.onComplete.add(onStepComplete, this);
                 } else {
                     //World wrap occurs
-                    this.tweenWrap = game.add.tween(this.sprite).to(step, this.speed, null, true);
+                    this.tweenWrap = game.add.tween(this).to(step, this.speed, null, true);
                     this.tweenWrap.onComplete.add(onWrapComplete, this);
                 }
             }
@@ -142,14 +146,10 @@
         this.lastDir.letter = dir.letter;
         dir.currentNode = node;
         this.lastDir.currentNode = node;
-        this.sprite.animations.play(animations[dir.letter]);
+        this.animations.play(animations[dir.letter]);
 
         return dir;
     };
-
-    //XRoads.Creep.prototype.kill = function (creep) {
-
-    //}
 
     XRoads.Creep.prototype.render = function () {
 
