@@ -9,6 +9,7 @@
 
         Phaser.Sprite.call(this, game, point.x, point.y, this.creepType);
         game.add.existing(this);
+        
         //this.anchor.setTo(.5, .5);
         this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
@@ -89,6 +90,7 @@
                     dir.currentNode.occupant = null;
                     this.tweenDeath = game.add.tween(this).to({ x: "+0", y: "-40" }, this.speed * 10, null, true);
                     //game.add.tween(this).to({ scale: { x: 4, y: 4 } }, this.speed * 10, null, true);
+                    this.bringToTop();
                     s = game.add.tween(this.scale);
                     s.to({ x: 4, y: 4 }, this.speed * 10, null);                    s.start();
                     this.tweenDeath.onComplete.add(onDeathComplete, this);

@@ -11,6 +11,11 @@ XRoads.Combat.prototype = {
         XRoads.Grid.create(this.game);
         XRoads.GridNodes.create(XRoads.Grid.getColumns(), XRoads.Grid.getRows(), 16);
         this.creeps.populate();
+        this.game.stage.smoothed = false;
+        // Hax0rz for IE
+        if (this.game.context.msImageSmoothingEnabled) {
+            this.game.context.msImageSmoothingEnabled = false;
+        }
     },
 
     update: function () {
