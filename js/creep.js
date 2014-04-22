@@ -7,9 +7,9 @@
         game = XRoads.game;
         var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
 
-        Phaser.Sprite.call(this, game, point.x, point.y, this.type);
+        Phaser.Sprite.call(this, game, point.x, point.y, this.creepType);
         game.add.existing(this);
-
+        //this.anchor.setTo(.5, .5);
         this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
@@ -18,7 +18,7 @@
         this.animations.add('walkDown', [6, 7, 8, 7], fps, true);
         this.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
         this.animations.add('fighting', [1, 4, 7, 10], fps, true);
-        //this.sprite.animations.add('death', [12, 13, 14], fps, true);
+        this.animations.add('death', [0, 4, 8, 9], fps, true);
     };
 
     XRoads.Creep.prototype = Object.create(Phaser.Sprite.prototype);
@@ -34,7 +34,6 @@
           //tweens can use relative movement coordinates
           , step = { x: '+0', y: '+0' }
           , shift = { x: 0, y: 0 };
-
         if (!this.moving && !this.isDead) {
             x = this.x;
             y = this.y;
@@ -81,17 +80,23 @@
                 this.moving = false;
                 if (this.life < .1) {
                     this.isDead = true;
-                    this.animations.play('fighting');
+                    this.animations.play('death');
                     if (dir.currentNode[dir.letter]){
                         dir.currentNode[dir.letter].occupant = null;
                         dir.currentNode[dir.letter].isOccupied = false;
                     }
                     dir.currentNode.isOccupied = false;
                     dir.currentNode.occupant = null;
-
-                    this.kill();
+                    this.tweenDeath = game.add.tween(this).to({ x: "+0", y: "-40" }, this.speed * 10, null, true);
+                    //game.add.tween(this).to({ scale: { x: 4, y: 4 } }, this.speed * 10, null, true);
+                    s = game.add.tween(this.scale);
+                    s.to({ x: 4, y: 4 }, this.speed * 10, null);                    s.start();
+                    this.tweenDeath.onComplete.add(onDeathComplete, this);
                 }
             };
+            function onDeathComplete() {
+                this.kill();
+            }
             function onWrapComplete() {
                 if (Math.abs(dir.x - x)) {
                     this.x = dir.x - shift.x;

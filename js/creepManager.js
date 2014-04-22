@@ -20,7 +20,7 @@ XRoads.CreepManager.prototype = {
 
             this._add(type, x, y);
         }
-
+        //this._creeps.setAll('property', 1.5);
         function getStartingLocation() {
             var node;
             x = Math.floor(Math.random() * XRoads.Grid.getColumns());
@@ -43,39 +43,40 @@ XRoads.CreepManager.prototype = {
 };
 
 XRoads.CreepManager.definitions = {
+    //'type' is protected on sprites. Use 'creepType' instead.
     werewolf: function () {
         this.speed = 100;
-        this.type = 'werewolf';
+        this.creepType = 'werewolf';
         this.damage = 1;
         this.life = 2;
         XRoads.Creep.apply(this, arguments);
     },
     vamp: function () {
         this.speed = 200;
-        this.type = 'vamp';
+        this.creepType = 'vamp';
         this.damage = 2;
         this.life = 3;
         XRoads.Creep.apply(this, arguments);
     },
     swamp: function () {
         this.speed = 300;
-        this.type = 'swamp';
+        this.creepType = 'swamp';
         this.damage = 2;
         this.life = 4;
         XRoads.Creep.apply(this, arguments);
     },
     mummy: function () {
         this.speed = 700;
-        this.type = 'mummy';
+        this.creepType = 'mummy';
         this.damage = 1;
         this.life = 6;
         XRoads.Creep.apply(this, arguments);
     },
     frank: function () {
         this.speed = 200;
-        this.type = 'frank';
+        this.creepType = 'frank';
         this.damage = 2;
-        this.life = 10;
+        this.life = 5;
         XRoads.Creep.apply(this, arguments);
     }
 };

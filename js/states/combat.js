@@ -2,8 +2,8 @@ XRoads.Combat = function () { };
 
 XRoads.Combat.prototype = {
     preload: function () {
-        this.creeps = new XRoads.CreepManager(this.game);
         XRoads.Map.preload(this.game);
+        this.creeps = new XRoads.CreepManager(this.game);
     },
 
     create: function () {

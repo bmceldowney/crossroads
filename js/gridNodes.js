@@ -170,7 +170,7 @@
 
     everyoneHatesFrank = function (node) {
         if (node.occupant) {
-            if (node.occupant.type == "frank") {
+            if (node.occupant.creepType === "frank") {
                 return true;
             }
         }
