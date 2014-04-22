@@ -85,10 +85,10 @@ XRoads.CreepManager.definitions = {
         XRoads.Creep.apply(this, arguments);
     },
     frank: function () {
-        this.speed = 600;
+        this.speed = 200;
         this.type = 'frank';
         this.damage = 2;
-        this.life = 5;
+        this.life = 10;
         XRoads.Creep.apply(this, arguments);
     }
 };

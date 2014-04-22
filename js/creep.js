@@ -11,10 +11,10 @@
         this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
-        this.sprite.animations.add('walkUp', [0, 1, 2], fps, true);
-        this.sprite.animations.add('walkRight', [3, 4, 5], fps, true);
-        this.sprite.animations.add('walkDown', [6, 7, 8], fps, true);
-        this.sprite.animations.add('walkLeft', [9, 10, 11], fps, true);
+        this.sprite.animations.add('walkUp', [0, 1, 2, 1], fps, true);
+        this.sprite.animations.add('walkRight', [3, 4, 5, 4], fps, true);
+        this.sprite.animations.add('walkDown', [6, 7, 8, 7], fps, true);
+        this.sprite.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
         this.sprite.animations.add('fighting', [1, 4, 7, 10], fps, true);
         //this.sprite.animations.add('death', [12, 13, 14], fps, true);
     };
@@ -78,7 +78,14 @@
                 if (this.life < .1) {
                     this.isDead = true;
                     this.sprite.animations.play('fighting');
+                    if (dir.currentNode[dir.letter]){
+                        dir.currentNode[dir.letter].occupant = null;
+                        dir.currentNode[dir.letter].isOccupied = false;
+                    }
+                    dir.currentNode.isOccupied = false;
+                    dir.currentNode.occupant = null;
                     //this.kill(this);
+                    this.sprite.kill();
                 }
             };
             function onWrapComplete() {
@@ -140,9 +147,9 @@
         return dir;
     };
 
-    XRoads.Creep.prototype.kill = function (creep) {
+    //XRoads.Creep.prototype.kill = function (creep) {
 
-    }
+    //}
 
     XRoads.Creep.prototype.render = function () {
 
