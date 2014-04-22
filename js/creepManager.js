@@ -5,12 +5,11 @@
     this.game.load.spritesheet('frank', 'assets/frank.png', 16, 16);
     this.game.load.spritesheet('mummy', 'assets/mummy.png', 16, 16);
     this.game.load.spritesheet('swamp', 'assets/swamp.png', 16, 16);
-
-    this._creeps = this.game.add.group();
 };
 
 XRoads.CreepManager.prototype = {
     populate: function () {
+        this._creeps = this.game.add.group();
         var type, x, y
           , types = ['werewolf', 'swamp', 'vamp', 'frank', 'mummy'];
 
