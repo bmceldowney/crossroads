@@ -60,52 +60,60 @@
                     this.currentNode.occupant = null;
                     this.currentNode.isOccupied = false;
                 }
-
-                this.sprite.tweenDeath = game.add.tween(this.sprite).to({ alpha: 0 }, 4000, null, true);
+                XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 15, { x: this.currentNode.xPos, y: this.currentNode.yPos });
+                this.sprite.tweenDeath = game.add.tween(this.sprite).to({ alpha: 0 }, 5000, null, true);
                 this.sprite.tweenDeath.onComplete.add(onDeathComplete, this);
                 this.sprite.bringToTop();
             };
             if (!this.isDead) {
                 if (cursors.left.isDown) { // && !sprite.body.blocked.left
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x - 8, this.sprite.y);
-                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
-                        sprite.x -= 2;
-                    }
-                    if (tempNode.isOccupied && tempNode.occupant === this) {
-                        sprite.x -= 2;
+                    if (tempNode) {
+                        if (!tempNode.isWall && !tempNode.isOccupied) {
+                            sprite.x -= 2;
+                        }
+                        if (tempNode.isOccupied && tempNode.occupant === this) {
+                            sprite.x -= 2;
+                        }
                     }
                     sprite.animations.play('walkLeft');
                     isMoving = true;
                 };
                 if (cursors.right.isDown) { // && !sprite.body.blocked.right
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x + 8, this.sprite.y);
-                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
-                        sprite.x += 2;
-                    }
-                    if (tempNode.isOccupied && tempNode.occupant === this) {
-                        sprite.x += 2;
+                    if (tempNode) {
+                        if (!tempNode.isWall && !tempNode.isOccupied) {
+                            sprite.x += 2;
+                        }
+                        if (tempNode.isOccupied && tempNode.occupant === this) {
+                            sprite.x += 2;
+                        }
                     }
                     sprite.animations.play('walkRight');
                     isMoving = true;
                 };
                 if (cursors.up.isDown) { // && !sprite.body.blocked.right
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - 8);
-                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
-                        sprite.y -= 2;
-                    }
-                    if (tempNode.isOccupied && tempNode.occupant === this) {
-                        sprite.y -= 2;
+                    if (tempNode) {
+                        if (!tempNode.isWall && !tempNode.isOccupied) {
+                            sprite.y -= 2;
+                        }
+                        if (tempNode.isOccupied && tempNode.occupant === this) {
+                            sprite.y -= 2;
+                        }
                     }
                     sprite.animations.play('walkUp');
                     isMoving = true;
                 };
                 if (cursors.down.isDown) { // && !sprite.body.blocked.right
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + 8);
-                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
-                        sprite.y += 2;
-                    }
-                    if (tempNode.isOccupied && tempNode.occupant === this) {
-                        sprite.y += 2;
+                    if (tempNode) {
+                        if (!tempNode.isWall && !tempNode.isOccupied) {
+                            sprite.y += 2;
+                        }
+                        if (tempNode.isOccupied && tempNode.occupant === this) {
+                            sprite.y += 2;
+                        }
                     }
                     sprite.animations.play('walkDown');
                     isMoving = true;
