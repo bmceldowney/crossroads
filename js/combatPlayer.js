@@ -9,6 +9,7 @@
           , cursors
           , direction
           , velocity
+          , creepType = 'player'
           , spriteStr = 'dude';
 
         this.preload = function () {
@@ -26,6 +27,9 @@
             this.lastDir = { x: null, y: null, letter: null, node: null, lastNode: null };
             this.moving = false;
             this.isDead = false;
+            this.creepType = 'player';
+            this.life = 7;
+            this.damage = 1;
             this.currentNode = null;
             this.lastNode = null;
             this.nextNode = null;
@@ -48,48 +52,82 @@
             var tempNode = {};
             isMoving = false;
             this.currentNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y);
-            if (cursors.left.isDown) { // && !sprite.body.blocked.left
-                tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x - 8, this.sprite.y);
-                if (tempNode && !tempNode.isWall){
-                    sprite.x -= 2;
+            if (this.life < .1) {
+                this.isDead = true;
+                this.sprite.animations.play('death');
+
+                if (this.currentNode) {
+                    this.currentNode.occupant = null;
+                    this.currentNode.isOccupied = false;
                 }
-                sprite.animations.play('walkLeft');
-                isMoving = true;
+
+                this.sprite.tweenDeath = game.add.tween(this.sprite).to({ alpha: 0 }, 4000, null, true);
+                this.sprite.tweenDeath.onComplete.add(onDeathComplete, this);
+                this.sprite.bringToTop();
             };
-            if (cursors.right.isDown) { // && !sprite.body.blocked.right
-                tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x + 8, this.sprite.y);
-                if (tempNode && !tempNode.isWall) {
-                    sprite.x += 2;
-                }
-                sprite.animations.play('walkRight');
-                isMoving = true;
-            };
-            if (cursors.up.isDown) { // && !sprite.body.blocked.right
-                tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - 8);
-                if (tempNode && !tempNode.isWall) {
-                    sprite.y -= 2;
-                }
-                sprite.animations.play('walkUp');
-                isMoving = true;
-            };
-            if (cursors.down.isDown) { // && !sprite.body.blocked.right
-                tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + 8);
-                if (tempNode && !tempNode.isWall) {
-                    sprite.y += 2;
-                }
-                sprite.animations.play('walkDown');
-                isMoving = true;
-            };
-            if (!isMoving) {
-                sprite.animations.stop();
-            };
-            //Lay a trail if the node changes
-            this.nextNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y);
-            if (this.currentNode != this.nextNode) {
-                if (!this.nextNode.isWall) {
-                    XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 49, { x: this.nextNode.xPos, y: this.nextNode.yPos });
+            if (!this.isDead) {
+                if (cursors.left.isDown) { // && !sprite.body.blocked.left
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x - 8, this.sprite.y);
+                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
+                        sprite.x -= 2;
+                    }
+                    if (tempNode.isOccupied && tempNode.occupant === this) {
+                        sprite.x -= 2;
+                    }
+                    sprite.animations.play('walkLeft');
+                    isMoving = true;
+                };
+                if (cursors.right.isDown) { // && !sprite.body.blocked.right
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x + 8, this.sprite.y);
+                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
+                        sprite.x += 2;
+                    }
+                    if (tempNode.isOccupied && tempNode.occupant === this) {
+                        sprite.x += 2;
+                    }
+                    sprite.animations.play('walkRight');
+                    isMoving = true;
+                };
+                if (cursors.up.isDown) { // && !sprite.body.blocked.right
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - 8);
+                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
+                        sprite.y -= 2;
+                    }
+                    if (tempNode.isOccupied && tempNode.occupant === this) {
+                        sprite.y -= 2;
+                    }
+                    sprite.animations.play('walkUp');
+                    isMoving = true;
+                };
+                if (cursors.down.isDown) { // && !sprite.body.blocked.right
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + 8);
+                    if (tempNode && !tempNode.isWall && !tempNode.isOccupied) {
+                        sprite.y += 2;
+                    }
+                    if (tempNode.isOccupied && tempNode.occupant === this) {
+                        sprite.y += 2;
+                    }
+                    sprite.animations.play('walkDown');
+                    isMoving = true;
+                };
+                if (!isMoving) {
+                    sprite.animations.stop();
+                };
+                //Do stuff and Lay a trail if the node changes
+                this.nextNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y);
+                if (this.currentNode != this.nextNode) {
+                    if (!this.nextNode.isWall) {
+                        XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 49, { x: this.nextNode.xPos, y: this.nextNode.yPos });
+                        this.nextNode.occupant = this;
+                        this.nextNode.isOccupied = true;
+                        this.currentNode.occupant = null;
+                        this.currentNode.isOccupied = false;
+                    };
                 };
             };
+            function onDeathComplete() {
+                game.state.start('menu');
+            }
             
         };
     };

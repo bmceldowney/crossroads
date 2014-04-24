@@ -54,7 +54,7 @@ XRoads.CreepManager.definitions = {
     werewolf: function () {
         this.speed = 100;
         this.creepType = 'werewolf';
-        this.hates = ['vamp', 'mummy', 'frank', 'bird', 'zombie'];
+        this.hates = ['player', 'vamp', 'mummy', 'frank', 'bird', 'zombie'];
         this.damage = 1;
         this.life = 2;
         this.onDeath = function (x, y) {
@@ -65,7 +65,7 @@ XRoads.CreepManager.definitions = {
     vamp: function () {
         this.speed = 200;
         this.creepType = 'vamp';
-        this.hates = ['werewolf', 'mummy', 'frank', 'zombie'];
+        this.hates = ['player', 'werewolf', 'mummy', 'frank', 'zombie'];
         this.damage = 2;
         this.life = 3;
 
@@ -82,7 +82,7 @@ XRoads.CreepManager.definitions = {
     swamp: function () {
         this.speed = 300;
         this.creepType = 'swamp';
-        this.hates = ['mummy', 'vamp', 'werewolf', 'bird', 'zombie'];
+        this.hates = ['player', 'mummy', 'vamp', 'werewolf', 'bird', 'zombie'];
         this.damage = 2;
         this.life = 3;
         XRoads.Creep.apply(this, arguments);
@@ -90,7 +90,7 @@ XRoads.CreepManager.definitions = {
     mummy: function () {
         this.speed = 700;
         this.creepType = 'mummy';
-        this.hates = ['swamp', 'vamp', 'frank', 'bird'];
+        this.hates = ['player', 'swamp', 'vamp', 'frank', 'bird'];
         this.damage = 1;
         this.life = 4;
         XRoads.Creep.apply(this, arguments);
@@ -99,7 +99,7 @@ XRoads.CreepManager.definitions = {
         this.speed = 400;
         this.creepType = 'frank';
         //frank hates everyone
-        this.hates = ['werewolf', 'vamp', 'swamp', 'mummy', 'frank', 'bird', 'zombie'];
+        this.hates = ['player', 'werewolf', 'vamp', 'swamp', 'mummy', 'frank', 'bird', 'zombie'];
         this.damage = 2;
         this.life = 4;
         XRoads.Creep.apply(this, arguments);
@@ -107,7 +107,7 @@ XRoads.CreepManager.definitions = {
     bird: function () {
         this.speed = 100;
         this.creepType = 'bird';
-        this.hates = ['werewolf', 'swamp', 'zombie', 'frank', 'mummy'];
+        this.hates = ['player', 'werewolf', 'swamp', 'zombie', 'frank', 'mummy'];
         this.damage = .5;
         this.life = 1;
         XRoads.Creep.apply(this, arguments);
@@ -115,7 +115,7 @@ XRoads.CreepManager.definitions = {
     zombie: function () {
         this.speed = 700;
         this.creepType = 'zombie';
-        this.hates = ['werewolf', 'vamp', 'swamp'];
+        this.hates = ['player', 'werewolf', 'vamp', 'swamp'];
         this.damage = 1;
         this.life = 4;
         XRoads.Creep.apply(this, arguments);
