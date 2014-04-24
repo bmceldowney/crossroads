@@ -98,6 +98,10 @@
     XRoads.GridNodes.getNodeFromCoords = function (x, y) {
         return nodes[(y * width) + x];
     };
+    XRoads.GridNodes.getNodeFromPos = function (x, y) {
+        var gp = XRoads.Grid.pointToGrid(x, y);
+        return nodes[(gp.y * width) + gp.x];
+    };
 
     XRoads.GridNodes.isLocked = function (nn) {
         return (!nodes[nn].n.isWall && !nodes[nn].s.isWall && !nodes[nn].e.isWall && !nodes[nn].w.isWall);
