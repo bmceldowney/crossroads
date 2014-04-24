@@ -99,7 +99,7 @@
             function onDeathComplete() {
                 dir.node.isOccupied = false;
                 dir.node.occupant = null;
-                XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, dir)
+                XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, dir);
                 if (this.onDeath) {
                     this.onDeath();
                 }

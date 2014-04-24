@@ -13,9 +13,9 @@ XRoads.CreepManager.prototype = {
     populate: function () {
         this._creeps = this.game.add.group();
         var type, x, y
-          , types = ['werewolf', 'vamp', 'mummy', 'mummy', 'mummy', 'frank', 'swamp'];
+          , types = ['werewolf', 'vamp', 'mummy', 'mummy', 'mummy', 'frank', 'frank', 'swamp', 'swamp'];
 
-        for (var i = 0; i < 150; i++) {
+        for (var i = 0; i < 80; i++) {
             type = types[Math.floor(Math.random() * types.length)];
             getStartingLocation();
 

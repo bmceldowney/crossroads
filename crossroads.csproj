@@ -78,6 +78,7 @@
     <Content Include="assets\werewolf.png" />
     <Content Include="css\game.css" />
     <Content Include="index.html" />
+    <Content Include="js\combatPlayer.js" />
     <Content Include="js\creep.js" />
     <Content Include="js\creepManager.js" />
     <Content Include="js\game.js" />
