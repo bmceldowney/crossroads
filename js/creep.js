@@ -1,19 +1,20 @@
 (function () {
     var game
-      , grid = XRoads.Grid;
+      , grid = XRoads.Grid
+      , manager;
 
     XRoads.Creep = function (x, y) {
         var point = grid.gridToPoint(x, y);
         game = XRoads.game;
         var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
-
         Phaser.Sprite.call(this, game, point.x, point.y, this.creepType);
         game.add.existing(this);
         
         //this.anchor.setTo(.5, .5);
-        this.lastDir = { x: null, y: null, letter: null, currentNode: null, lastNode: null };
+        this.lastDir = { x: null, y: null, letter: null, node: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
+        this.currentNode = null;
         this.animations.add('walkUp', [0, 1, 2, 1], fps, true);
         this.animations.add('walkRight', [3, 4, 5, 4], fps, true);
         this.animations.add('walkDown', [6, 7, 8, 7], fps, true);
@@ -40,9 +41,10 @@
             y = this.y;
             this.moving = true;
             dir = this.findDirection(x, y);
-            if (dir.currentNode[dir.letter]) {
+            this.currentNode = dir.node;
+            if (dir.node[dir.letter]) {
                 //Occupy nodes early to prevent creeps from walking into the same node
-                dir.currentNode[dir.letter].isOccupied = true;
+                dir.node[dir.letter].isOccupied = true;
             }
 
             switch (dir.letter) {
@@ -72,9 +74,10 @@
                 this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
-                    dir.currentNode.isOccupied = false;
-                    dir.currentNode.occupant = null;
-                    dir.currentNode[dir.letter].occupant = this;
+                    dir.node.isOccupied = false;
+                    dir.node.occupant = null;
+                    dir.node[dir.letter].occupant = this;
+                    this.currentNode = dir.node[dir.letter];
                 }
             };
             function onDoneComplete() {
@@ -82,21 +85,24 @@
                 if (this.life < .1) {
                     this.isDead = true;
                     this.animations.play('death');
-                    if (dir.currentNode[dir.letter]){
-                        dir.currentNode[dir.letter].occupant = null;
-                        dir.currentNode[dir.letter].isOccupied = false;
+                    
+                    if (dir.node[dir.letter]){
+                        dir.node[dir.letter].occupant = null;
+                        dir.node[dir.letter].isOccupied = false;
                     }
-                    dir.currentNode.isOccupied = false;
-                    dir.currentNode.occupant = null;
-                    this.tweenDeath = game.add.tween(this).to({ x: "+0", y: "-40" }, this.speed * 10, null, true);
-                    //game.add.tween(this).to({ scale: { x: 4, y: 4 } }, this.speed * 10, null, true);
+
+                    this.tweenDeath = game.add.tween(this).to({ alpha: 0 }, 2000, null, true);
                     this.bringToTop();
-                    s = game.add.tween(this.scale);
-                    s.to({ x: 4, y: 4 }, this.speed * 10, null);                    s.start();
                     this.tweenDeath.onComplete.add(onDeathComplete, this);
                 }
             };
             function onDeathComplete() {
+                dir.node.isOccupied = false;
+                dir.node.occupant = null;
+                XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, dir)
+                if (this.onDeath) {
+                    this.onDeath();
+                }
                 this.kill();
             }
             function onWrapComplete() {
@@ -108,22 +114,22 @@
                 this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
-                    dir.currentNode.isOccupied = false;
-                    dir.currentNode.occupant = null;
+                    dir.node.isOccupied = false;
+                    dir.node.occupant = null;
                 }
             };
             function onFightComplete() {
                 this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
                 this.tween2.onComplete.add(onDoneComplete, this);
                 if (dir.letter) {
-                    dir.currentNode.isOccupied = false;
-                    dir.currentNode.occupant = null;
-                    dir.currentNode[dir.letter].occupant = this;
+                    dir.node.isOccupied = false;
+                    dir.node.occupant = null;
+                    dir.node[dir.letter].occupant = this;
                 }
             };
             if (dir.fight) {
                 this.animations.play('fighting');
-                dir.currentNode[dir.fightLetter].occupant.life -= this.damage;
+                dir.node[dir.fightLetter].occupant.life -= this.damage;
                 this.tweenFight = game.add.tween(this).to(step, this.speed, null, true);
                 this.tweenFight.onComplete.add(onFightComplete, this);
             } else {
@@ -148,16 +154,86 @@
 
         gridCoords = grid.pointToGrid(x, y);
         var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
-        //var dir = XRoads.GridNodes.randomAvailableFromNode(node); //move randomly
-        var dir = XRoads.GridNodes.walkFromNodeToLetter(node, this.lastDir.letter);
+        //var dir = XRoads.Creep.randomAvailableFromNode(node); //move randomly
+        var dir = this.walkWithPurpose(node, this.lastDir.letter);
         this.lastDir.letter = dir.letter;
-        dir.currentNode = node;
-        this.lastDir.currentNode = node;
+        dir.node = node;
+        this.lastDir.node = node;
         this.animations.play(animations[dir.letter]);
 
         return dir;
     };
+    XRoads.Creep.prototype.randomAvailableFromNode = function (node) {
+        var directions = [];
+        var dLetter = [];
+        var m = 0;
 
+        if (!node.n.isWall && !node.n.isOccupied) {
+            directions.push(node.n);
+            dLetter.push('n');
+            m++;
+        }
+        if (!node.s.isWall && !node.s.isOccupied) {
+            directions.push(node.s);
+            dLetter.push('s');
+            m++;
+        }
+        if (!node.e.isWall && !node.e.isOccupied) {
+            directions.push(node.e);
+            dLetter.push('e');
+            m++;
+        }
+        if (!node.w.isWall && !node.w.isOccupied) {
+            directions.push(node.w);
+            dLetter.push('w');
+            m++;
+        }
+
+        if (m === 0) {
+            //No where to go. Stay put
+            return { x: node.xPos, y: node.yPos, letter: null, node: node };
+        } else {
+            //Math.random() will never return 1;
+            var r = Math.floor(Math.random() * m);
+
+            var dir = { x: 0, y: 0 };
+            dir.x = directions[r].xPos;
+            dir.y = directions[r].yPos;
+            dir.letter = dLetter[r];
+            dir.node = node;
+            return dir;
+        }
+    };
+
+    XRoads.Creep.prototype.walkWithPurpose = function (node, letter) {
+        if (!letter) {
+            return this.randomAvailableFromNode(node);
+        }
+
+        if (this.wannaFight(node, letter)) {
+            return { x: node.xPos, y: node.yPos, letter: null, node: node, fight: true, fightLetter: letter };
+        }
+
+        if (!node[letter].isWall && !node[letter].isOccupied && Math.random() * 16 < 15) {
+            var dir = { x: 0, y: 0 };
+            dir.x = node[letter].xPos;
+            dir.y = node[letter].yPos;
+            dir.letter = letter;
+            dir.node = node;
+            return dir;
+        } else {
+            return this.randomAvailableFromNode(node);
+        }
+    };
+    XRoads.Creep.prototype.wannaFight = function (node, letter) {
+        if (node[letter].occupant && node.occupant) {
+            for (var i = 0; i < node.occupant.hates.length; i++) {
+                if (node[letter].occupant.creepType === node.occupant.hates[i]) {
+                    return true;
+                }
+            }
+        }
+    }
     XRoads.Creep.prototype.render = function () {
 
     };
