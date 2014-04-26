@@ -100,7 +100,12 @@
     };
     XRoads.GridNodes.getNodeFromPos = function (x, y) {
         var gp = XRoads.Grid.pointToGrid(x, y);
-        return nodes[(gp.y * width) + gp.x];
+        //What? why -.0001? why?
+        if (x > XRoads.CombatMap.widthInPixels - .0001 || x < 0) {
+            return null;
+        } else {
+            return nodes[(gp.y * width) + gp.x];
+        }
     };
 
     XRoads.GridNodes.isLocked = function (nn) {

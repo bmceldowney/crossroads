@@ -75,6 +75,8 @@
                         if (tempNode.isOccupied && tempNode.occupant === this) {
                             sprite.x -= 2;
                         }
+                    } else if (!this.currentNode.w.isWall && !this.currentNode.w.isOccupied) {
+                        sprite.x = XRoads.CombatMap.widthInPixels - 2;
                     }
                     sprite.animations.play('walkLeft');
                     isMoving = true;
@@ -88,11 +90,13 @@
                         if (tempNode.isOccupied && tempNode.occupant === this) {
                             sprite.x += 2;
                         }
+                    } else if (!this.currentNode.e.isWall && !this.currentNode.e.isOccupied) {
+                        sprite.x = 2;
                     }
                     sprite.animations.play('walkRight');
                     isMoving = true;
                 };
-                if (cursors.up.isDown) { // && !sprite.body.blocked.right
+                if (cursors.up.isDown) { // && !sprite.body.blocked.up
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - 8);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
@@ -101,11 +105,13 @@
                         if (tempNode.isOccupied && tempNode.occupant === this) {
                             sprite.y -= 2;
                         }
+                    } else if (!this.currentNode.n.isWall && !this.currentNode.n.isOccupied) {
+                        sprite.y = XRoads.CombatMap.heightInPixels - 2;
                     }
                     sprite.animations.play('walkUp');
                     isMoving = true;
                 };
-                if (cursors.down.isDown) { // && !sprite.body.blocked.right
+                if (cursors.down.isDown) { // && !sprite.body.blocked.down
                     tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + 8);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
@@ -114,6 +120,8 @@
                         if (tempNode.isOccupied && tempNode.occupant === this) {
                             sprite.y += 2;
                         }
+                    } else if (!this.currentNode.s.isWall && !this.currentNode.s.isOccupied) {
+                        sprite.y = 2;
                     }
                     sprite.animations.play('walkDown');
                     isMoving = true;
