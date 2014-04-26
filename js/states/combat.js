@@ -15,6 +15,7 @@ XRoads.Combat.prototype = {
         this.creeps.populate();
         XRoads.CombatPlayer.create();
         this.game.stage.smoothed = false;
+        this.game.stage.backgroundColor = '#252525';
         // Hax0rz for IE
         if (this.game.context.msImageSmoothingEnabled) {
             this.game.context.msImageSmoothingEnabled = false;

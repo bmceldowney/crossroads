@@ -7,15 +7,16 @@
     this.game.load.spritesheet('swamp', 'assets/swamp.png', 16, 16);
     this.game.load.spritesheet('bird', 'assets/bird.png', 16, 16);
     this.game.load.spritesheet('zombie', 'assets/zombie.png', 16, 18);
+    this.game.load.spritesheet('catshroom', 'assets/catshroom.png', 20, 20);
 };
 
 XRoads.CreepManager.prototype = {
     populate: function () {
         this._creeps = this.game.add.group();
         var type, x, y
-          , types = ['werewolf', 'vamp', 'mummy', 'mummy', 'mummy', 'frank', 'frank', 'swamp', 'swamp'];
+          , types = ['werewolf', 'werewolf', 'vamp', 'mummy', 'catshroom', 'frank', 'swamp'];
 
-        for (var i = 0; i < 80; i++) {
+        for (var i = 0; i < 70; i++) {
             type = types[Math.floor(Math.random() * types.length)];
             getStartingLocation();
 
@@ -90,7 +91,7 @@ XRoads.CreepManager.definitions = {
     mummy: function () {
         this.speed = 700;
         this.creepType = 'mummy';
-        this.hates = ['player', 'swamp', 'vamp', 'frank', 'bird'];
+        this.hates = ['player', 'swamp', 'vamp', 'frank', 'bird', 'catshroom'];
         this.damage = 1;
         this.life = 4;
         XRoads.Creep.apply(this, arguments);
@@ -107,7 +108,7 @@ XRoads.CreepManager.definitions = {
     bird: function () {
         this.speed = 100;
         this.creepType = 'bird';
-        this.hates = ['player', 'werewolf', 'swamp', 'zombie', 'frank', 'mummy'];
+        this.hates = ['player', 'werewolf', 'swamp', 'zombie', 'frank', 'mummy', 'catshroom'];
         this.damage = .5;
         this.life = 1;
         XRoads.Creep.apply(this, arguments);
@@ -115,9 +116,17 @@ XRoads.CreepManager.definitions = {
     zombie: function () {
         this.speed = 700;
         this.creepType = 'zombie';
-        this.hates = ['player', 'werewolf', 'vamp', 'swamp'];
+        this.hates = ['player', 'werewolf', 'vamp', 'swamp', 'catshroom'];
         this.damage = 1;
-        this.life = 4;
+        this.life = 2;
         XRoads.Creep.apply(this, arguments);
-    }
+    },
+    catshroom: function () {
+    this.speed = 250;
+    this.creepType = 'catshroom';
+    this.hates = ['player', 'werewolf', 'vamp', 'swamp', 'bird'];
+    this.damage = 1;
+    this.life = 4;
+    XRoads.Creep.apply(this, arguments);
+}
 };

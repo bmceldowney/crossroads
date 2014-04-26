@@ -28,7 +28,7 @@
             this.moving = false;
             this.isDead = false;
             this.creepType = 'player';
-            this.life = 7;
+            this.life = 70;
             this.damage = 1;
             this.currentNode = null;
             this.lastNode = null;
