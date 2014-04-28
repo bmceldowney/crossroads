@@ -91,7 +91,7 @@
                         dir.node[dir.letter].isOccupied = false;
                     }
 
-                    this.tweenDeath = game.add.tween(this).to({ alpha: 0 }, 2000, null, true);
+                    this.tweenDeath = game.add.tween(this).to({ alpha: 0 }, 500, null, true);
                     this.bringToTop();
                     this.tweenDeath.onComplete.add(onDeathComplete, this);
                 }

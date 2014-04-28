@@ -1,12 +1,11 @@
 ﻿var CombatPlayer;
 
 (function () {
-    var isJumpStarted;
 
     CombatPlayer = function (game) {
         var sprite
           , isMoving
-          , cursors
+          , controls
           , direction
           , velocity
           , creepType = 'player'
@@ -14,10 +13,12 @@
 
         this.preload = function () {
             game.load.spritesheet(spriteStr, 'assets/player.png', 16, 18);
+            game.load.image('bullet', 'assets/playerbullet.png');
         };
 
         this.create = function () {
             this.speed = 150;
+            this.stepDistance = 2;
             var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
 
             this.sprite = sprite = game.add.sprite(240, 180, spriteStr);
@@ -28,7 +29,7 @@
             this.moving = false;
             this.isDead = false;
             this.creepType = 'player';
-            this.life = 70;
+            this.life = 10;
             this.damage = 1;
             this.currentNode = null;
             this.lastNode = null;
@@ -40,17 +41,46 @@
             this.sprite.animations.add('fighting', [1, 4, 7, 10], fps, true);
             this.sprite.animations.add('death', [0, 4, 8, 9], fps, true);
 
-            cursors = {
+            this.bulletVector = { x: 0, y: 0 };
+            this.bulletSpeed = 200;
+            this.bulletRate = 350;
+            this.bulletTime = 0;
+            this.bulletDamage = 1;
+            this.bulletWrap = true;
+            this.bullet;
+
+            controls = {
                 up: game.input.keyboard.addKey(Phaser.Keyboard.W),
                 left: game.input.keyboard.addKey(Phaser.Keyboard.A),
                 right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-                down: game.input.keyboard.addKey(Phaser.Keyboard.S)
+                down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+                shoot: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
             };
+
+            XRoads.CombatPlayer.bullets = game.add.group();
+            XRoads.CombatPlayer.bullets.enableBody = true;
+            XRoads.CombatPlayer.bullets.physicsBodyType = Phaser.Physics.ARCADE;            for (var i = 0; i < 10; i++) {
+                var b = new XRoads.PlayerBullet(0, 0, 'bullet');
+                XRoads.CombatPlayer.bullets.add(b);
+                b.anchor.setTo(.5, .5);
+                b.name = 'bullet' + i;
+                b.exists = false;
+                b.visible = false;
+                //insurance
+                b.checkWorldBounds = true;
+                b.events.onOutOfBounds.add(this.resetBullet, this);
+            }
         };
 
         this.update = function () {
-            var tempNode = {};
-            isMoving = false;
+            game.physics.arcade.overlap(this.bullets, XRoads.CM._creeps, this.bulletCollisionHandler, null, this);
+            this.upkeep();
+            this.move();
+            this.shoot();
+            
+        };
+        this.upkeep = function () {
+            //upkeep() must occur before move() 
             this.currentNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y);
             if (this.life < .1) {
                 this.isDead = true;
@@ -65,65 +95,82 @@
                 this.sprite.tweenDeath.onComplete.add(onDeathComplete, this);
                 this.sprite.bringToTop();
             };
+            function onDeathComplete() {
+                game.state.start('menu');
+            }
+        };
+        this.move = function () {
+            var tempNode = {};
+            isMoving = false;
+            
+            
             if (!this.isDead) {
-                if (cursors.left.isDown) { // && !sprite.body.blocked.left
-                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x - 8, this.sprite.y);
+                if (controls.left.isDown) { // && !sprite.body.blocked.left
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x - this.sprite.width * .5, this.sprite.y);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
-                            sprite.x -= 2;
+                            sprite.x -= this.stepDistance;
                         }
                         if (tempNode.isOccupied && tempNode.occupant === this) {
-                            sprite.x -= 2;
+                            sprite.x -= this.stepDistance;
                         }
                     } else if (!this.currentNode.w.isWall && !this.currentNode.w.isOccupied) {
-                        sprite.x = XRoads.CombatMap.widthInPixels - 2;
+                        sprite.x = XRoads.CombatMap.widthInPixels - this.stepDistance;
                     }
                     sprite.animations.play('walkLeft');
+                    this.bulletVector.x = -1;
+                    this.bulletVector.y = 0;
                     isMoving = true;
                 };
-                if (cursors.right.isDown) { // && !sprite.body.blocked.right
-                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x + 8, this.sprite.y);
+                if (controls.right.isDown) { // && !sprite.body.blocked.right
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x + this.sprite.width * .5, this.sprite.y);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
-                            sprite.x += 2;
+                            sprite.x += this.stepDistance;
                         }
                         if (tempNode.isOccupied && tempNode.occupant === this) {
-                            sprite.x += 2;
+                            sprite.x += this.stepDistance;
                         }
                     } else if (!this.currentNode.e.isWall && !this.currentNode.e.isOccupied) {
-                        sprite.x = 2;
+                        sprite.x = this.stepDistance;
                     }
                     sprite.animations.play('walkRight');
+                    this.bulletVector.x = 1;
+                    this.bulletVector.y = 0;
                     isMoving = true;
                 };
-                if (cursors.up.isDown) { // && !sprite.body.blocked.up
-                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - 8);
+                if (controls.up.isDown) { // && !sprite.body.blocked.up
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y - this.sprite.height * .5);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
-                            sprite.y -= 2;
+                            sprite.y -= this.stepDistance;
                         }
                         if (tempNode.isOccupied && tempNode.occupant === this) {
-                            sprite.y -= 2;
+                            sprite.y -= this.stepDistance;
                         }
                     } else if (!this.currentNode.n.isWall && !this.currentNode.n.isOccupied) {
-                        sprite.y = XRoads.CombatMap.heightInPixels - 2;
+                        sprite.y = XRoads.CombatMap.heightInPixels - this.stepDistance;
                     }
                     sprite.animations.play('walkUp');
+                    this.bulletVector.y = -1;
+                    this.bulletVector.x = 0;
                     isMoving = true;
                 };
-                if (cursors.down.isDown) { // && !sprite.body.blocked.down
-                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + 8);
+                if (controls.down.isDown) { // && !sprite.body.blocked.down
+                    tempNode = XRoads.GridNodes.getNodeFromPos(this.sprite.x, this.sprite.y + this.sprite.height * .5);
                     if (tempNode) {
                         if (!tempNode.isWall && !tempNode.isOccupied) {
-                            sprite.y += 2;
+                            sprite.y += this.stepDistance;
                         }
                         if (tempNode.isOccupied && tempNode.occupant === this) {
-                            sprite.y += 2;
+                            sprite.y += this.stepDistance;
                         }
                     } else if (!this.currentNode.s.isWall && !this.currentNode.s.isOccupied) {
-                        sprite.y = 2;
+                        sprite.y = this.stepDistance;
                     }
                     sprite.animations.play('walkDown');
+                    this.bulletVector.y = 1;
+                    this.bulletVector.x = 0;
                     isMoving = true;
                 };
                 if (!isMoving) {
@@ -141,10 +188,28 @@
                     };
                 };
             };
-            function onDeathComplete() {
-                game.state.start('menu');
+        };
+
+        this.shoot = function () {
+            if (controls.shoot.isDown) {
+                if (game.time.now > this.bulletTime) {
+                    this.bullet = this.bullets.getFirstExists(false);
+
+                    if (this.bullet) {
+                        this.bullet.reset(this.sprite.x, this.sprite.y);
+                        this.bullet.body.velocity.y = this.bulletVector.y * this.bulletSpeed;
+                        this.bullet.body.velocity.x = this.bulletVector.x * this.bulletSpeed;
+                        this.bulletTime = game.time.now + this.bulletRate;
+                    }
+                }
             }
-            
+        };
+        this.bulletCollisionHandler = function (bullet, target) {
+            bullet.kill();
+            target.life -= this.bulletDamage;
+        }
+        this.resetBullet = function (bullet) {
+            bullet.kill();
         };
     };
 

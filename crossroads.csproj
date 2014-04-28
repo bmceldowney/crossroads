@@ -85,6 +85,7 @@
     <Content Include="js\grid.js" />
     <Content Include="js\gridNodes.js" />
     <Content Include="js\map.js" />
+    <Content Include="js\playerBullet.js" />
     <Content Include="js\states\boot.js" />
     <Content Include="js\states\combat.js" />
     <Content Include="js\states\menu.js" />
