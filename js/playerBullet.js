@@ -8,7 +8,8 @@
     };
 
     XRoads.PlayerBullet.prototype = Object.create(Phaser.Sprite.prototype);
-    XRoads.PlayerBullet.prototype.constructor = XRoads.PlayerBullet;
+    XRoads.PlayerBullet.prototype.constructor = XRoads.PlayerBullet;
+
 
     XRoads.PlayerBullet.prototype.update = function () {
         var currentNode = XRoads.GridNodes.getNodeFromPos(this.x, this.y);

@@ -57,6 +57,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="3rdparty\easystar-0.1.6.js" />
+    <Content Include="3rdparty\easystar.js" />
+    <Content Include="3rdparty\phaser.js" />
     <Content Include="assets\map.json" />
     <Content Include="assets\map.tmx" />
     <None Include="Web.Debug.config">
@@ -67,9 +70,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="3rd party\easystar-0.1.6.js" />
-    <Content Include="3rd party\easystar.js" />
-    <Content Include="3rd party\phaser.js" />
     <Content Include="assets\frank.png" />
     <Content Include="assets\mummy.png" />
     <Content Include="assets\swamp.png" />
