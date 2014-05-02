@@ -146,7 +146,13 @@
 
         }
     };
-    
+    XRoads.Creep.prototype.upkeep = function () {
+
+    };
+
+    XRoads.Creep.prototype.move = function () {
+
+    };
 
     XRoads.Creep.prototype.findDirection = function (x, y) {
         var gridCoords

@@ -14,11 +14,12 @@ XRoads.CreepManager.prototype = {
     populate: function () {
         this._creeps = this.game.add.group();
         this._creeps.enableBody = true;
-        this._creeps.physicsBodyType = Phaser.Physics.ARCADE;
+        this._creeps.physicsBodyType = Phaser.Physics.ARCADE;
+
         var type, x, y
           , types = ['werewolf', 'werewolf', 'vamp', 'mummy', 'catshroom', 'frank', 'swamp'];
 
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < 5; i++) {
             type = types[Math.floor(Math.random() * types.length)];
             getStartingLocation();
 

@@ -12,6 +12,7 @@
 
 
     XRoads.PlayerBullet.prototype.update = function () {
+        this.upkeep();
         var currentNode = XRoads.GridNodes.getNodeFromPos(this.x, this.y);
         if (currentNode) {
             if (currentNode.isWall) {
@@ -26,5 +27,22 @@
         } else if (this.y < 0) {
             this.y += XRoads.CombatMap.heightInPixels;
         }
+        game.physics.arcade.collide(this, XRoads.CombatPlayer.bullets, this.bullet2BulletCollisionHandler, null, this);
+    };
+    XRoads.PlayerBullet.prototype.upkeep = function () {
+        if (this.life < .1) {
+            this.resetMe();
+        }
+    };
+    XRoads.PlayerBullet.prototype.bullet2BulletCollisionHandler = function (bullet, target) {
+        //bullet.resetMe();
+        //target.resetMe();
+        target.life -= 1;
+        bullet.life -= 1;
+        //this.scale = {x: 2, y: 1};
+    };
+    XRoads.PlayerBullet.prototype.resetMe = function () {
+        this.life = 1;
+        this.kill();
     };
 })();
