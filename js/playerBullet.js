@@ -1,5 +1,6 @@
 ﻿(function () {
-    var game;
+    var game,
+        damage;
 
     XRoads.PlayerBullet = function (x, y, asset) {
         game = XRoads.game;

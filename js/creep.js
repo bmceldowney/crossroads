@@ -30,6 +30,7 @@
         //Creeps occupy a node the instant they decide to go there (before tween1). 
         //Creeps leave their node after tween1 completes, or - the moment they leave the old space.
         //Also, 2 steps/tweens helps us with better looking world wrapping.
+        this.upkeep();
         var x
           , y
           , dir
@@ -147,7 +148,7 @@
         }
     };
     XRoads.Creep.prototype.upkeep = function () {
-
+        game.physics.arcade.overlap(XRoads.CombatPlayer.bullets, this, this.bulletCollisionHandler, null, this);
     };
 
     XRoads.Creep.prototype.move = function () {
@@ -239,6 +240,11 @@
                 }
             }
         }
+    };
+    XRoads.Creep.prototype.bulletCollisionHandler = function (bullet, target) {
+        target.life -= bullet.damage;
+        bullet.life -= 1;
+        //bullet.resetMe();
     }
     XRoads.Creep.prototype.render = function () {
 

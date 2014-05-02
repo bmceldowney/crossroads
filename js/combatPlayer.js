@@ -68,6 +68,7 @@
                 XRoads.CombatPlayer.bullets.add(b);
                 b.anchor.setTo(.5, .5);
                 b.name = 'bullet' + i;
+                b.damage = this.bulletDamage;
                 b.exists = false;
                 b.visible = false;
                 b.life = 1;
@@ -79,7 +80,6 @@
         };
 
         this.update = function () {
-            game.physics.arcade.overlap(this.bullets, XRoads.CM._creeps, this.bulletCollisionHandler, null, this);
             //Dunno why this shit does not work
             //game.physics.arcade.overlap(this.bullets, this.sprite, this.bulletSelfCollisionHandler, null, this);
             this.upkeep();
@@ -214,12 +214,9 @@
                 }
             }
         };
-        this.bulletCollisionHandler = function (bullet, target) {
-            target.life -= this.bulletDamage;
-            bullet.resetMe();
-        }
         this.bulletSelfCollisionHandler = function (bullet, mySprite) {
-            this.life -= this.bulletDamage;
+            //this.life -= this.bulletDamage;
+            this.life -= bullet.damage;
             //bullet.resetMe();
         }
         this.resetBullet = function (bullet) {
