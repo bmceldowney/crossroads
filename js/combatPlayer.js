@@ -12,7 +12,7 @@
           , spriteStr = 'dude';
 
         this.preload = function () {
-            game.load.spritesheet(spriteStr, 'assets/crossdude.png', 20, 20);
+            game.load.spritesheet(spriteStr, 'assets/beav.png', 48, 48);
             game.load.image('bullet', 'assets/playerbullet.png');
         };
 
@@ -20,7 +20,7 @@
             this.speed = 150;
             this.stepDistance = 2;
             //var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
-            var fps = 30;
+            var fps = 10;
 
             this.sprite = sprite = game.add.sprite(240, 180, spriteStr);
 
@@ -35,10 +35,14 @@
             this.currentNode = null;
             this.lastNode = null;
             this.nextNode = null;
-            this.sprite.animations.add('walkUp', [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], fps, true);
-            this.sprite.animations.add('walkRight', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], fps, true);
-            this.sprite.animations.add('walkDown', [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47], fps, true);
-            this.sprite.animations.add('walkLeft', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], fps, true);
+            //this.sprite.animations.add('walkUp', [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], fps, true);
+            //this.sprite.animations.add('walkRight', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], fps, true);
+            //this.sprite.animations.add('walkDown', [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47], fps, true);
+            //this.sprite.animations.add('walkLeft', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], fps, true);
+            this.sprite.animations.add('walkUp', [9, 10, 11, 10], fps, true);
+            this.sprite.animations.add('walkRight', [0, 1, 2, 1], fps, true);
+            this.sprite.animations.add('walkDown', [6, 7, 8, 7], fps, true);
+            this.sprite.animations.add('walkLeft', [3, 4, 5, 4], fps, true);
             this.sprite.animations.add('fighting', [1, 4, 7, 10], fps, true);
             this.sprite.animations.add('death', [0, 4, 8, 9], fps, true);
             this.sprite.animations.add('shooting', [11, 12, 13], fps, true);
