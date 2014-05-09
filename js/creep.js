@@ -12,6 +12,7 @@
         
         //this.anchor.setTo(.5, .5);
         this.lastDir = { x: null, y: null, letter: null, node: null, lastNode: null };
+        this.direction = { x: null, y: null, letter: null, node: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
         this.currentNode = null;
@@ -21,139 +22,158 @@
         this.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
         this.animations.add('fighting', [1, 4, 7, 10], fps, true);
         this.animations.add('death', [0, 4, 8, 9], fps, true);
+
+        this.xPos = 0;
+        this.yPos = 0;
+
+        this.step = { x: '+0', y: '+0' };
+        this.shift = { x: 0, y: 0 };
+
+        this.tween1 = null;
+        this.tween2 = null;
+        this.tweenDeath = null;
+        this.tweenFight = null;
     };
 
     XRoads.Creep.prototype = Object.create(Phaser.Sprite.prototype);
 
     XRoads.Creep.prototype.update = function () {
-        //the movement is divided into 2 steps & tweens.
-        //Creeps occupy a node the instant they decide to go there (before tween1). 
-        //Creeps leave their node after tween1 completes, or - the moment they leave the old space.
-        //Also, 2 steps/tweens helps us with better looking world wrapping.
         this.upkeep();
-        var x
-          , y
-          , dir
-          //tweens can use relative movement coordinates
-          , step = { x: '+0', y: '+0' }
-          , shift = { x: 0, y: 0 };
-        if (!this.moving && !this.isDead) {
-            x = this.x;
-            y = this.y;
-            this.moving = true;
-            dir = this.findDirection(x, y);
-            this.currentNode = dir.node;
-            if (dir.node[dir.letter]) {
-                //Occupy nodes early to prevent creeps from walking into the same node
-                dir.node[dir.letter].isOccupied = true;
-            }
-
-            switch (dir.letter) {
-                case 'n' :
-                    step.y = '-8';
-                    shift.y = -8;
-                    break;
-                case 's' :
-                    step.y = '+8';
-                    shift.y = 8;
-                    break;
-                case 'e' :
-                    step.x = '+8';
-                    shift.x = 8;
-                    break;
-                case 'w' :
-                    step.x = '-8';
-                    shift.x = -8;
-                    break;
-                default :
-                    step.x = '+0';
-                    step.y = '+0';
-                    break;
-            }
-            //Some browsers want these onComplete functions defined early.(firefox28.0)
-            function onStepComplete() {
-                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
-                this.tween2.onComplete.add(onDoneComplete, this);
-                if (dir.letter) {
-                    dir.node.isOccupied = false;
-                    dir.node.occupant = null;
-                    dir.node[dir.letter].occupant = this;
-                    this.currentNode = dir.node[dir.letter];
-                }
-            };
-            function onDoneComplete() {
-                this.moving = false;
-                if (this.life < .1) {
-                    this.isDead = true;
-                    this.animations.play('death');
-                    
-                    if (dir.node[dir.letter]){
-                        dir.node[dir.letter].occupant = null;
-                        dir.node[dir.letter].isOccupied = false;
-                    }
-
-                    this.tweenDeath = game.add.tween(this).to({ alpha: 0 }, 500, null, true);
-                    this.bringToTop();
-                    this.tweenDeath.onComplete.add(onDeathComplete, this);
-                }
-            };
-            function onDeathComplete() {
-                dir.node.isOccupied = false;
-                dir.node.occupant = null;
-                XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, dir);
-                if (this.onDeath) {
-                    this.onDeath();
-                }
-                this.kill();
-            }
-            function onWrapComplete() {
-                if (Math.abs(dir.x - x)) {
-                    this.x = dir.x - shift.x;
-                } else {
-                    this.y = dir.y - shift.y;
-                }
-                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
-                this.tween2.onComplete.add(onDoneComplete, this);
-                if (dir.letter) {
-                    dir.node.isOccupied = false;
-                    dir.node.occupant = null;
-                }
-            };
-            function onFightComplete() {
-                this.tween2 = game.add.tween(this).to(step, this.speed, null, true);
-                this.tween2.onComplete.add(onDoneComplete, this);
-                if (dir.letter) {
-                    dir.node.isOccupied = false;
-                    dir.node.occupant = null;
-                    dir.node[dir.letter].occupant = this;
-                }
-            };
-            if (dir.fight) {
-                this.animations.play('fighting');
-                dir.node[dir.fightLetter].occupant.life -= this.damage;
-                this.tweenFight = game.add.tween(this).to(step, this.speed, null, true);
-                this.tweenFight.onComplete.add(onFightComplete, this);
-            } else {
-                //Kludgy wrap detection...
-                if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {
-                    this.tween1 = game.add.tween(this).to(step, this.speed, null, true);
-                    this.tween1.onComplete.add(onStepComplete, this);
-                } else {
-                    //World wrap occurs
-                    this.tweenWrap = game.add.tween(this).to(step, this.speed, null, true);
-                    this.tweenWrap.onComplete.add(onWrapComplete, this);
-                }
-            }
-
-        }
+        this.move();  
     };
     XRoads.Creep.prototype.upkeep = function () {
         game.physics.arcade.overlap(XRoads.CombatPlayer.bullets, this, this.bulletCollisionHandler, null, this);
     };
 
     XRoads.Creep.prototype.move = function () {
+        //the movement is divided into 2 steps & tweens.
+        //Creeps occupy a node the instant they decide to go there (before tween1). 
+        //Creeps leave their node after tween1 completes, or - the moment they leave the old space.
+        //Also, 2 steps/tweens helps us with better looking world wrapping.
+        if (!this.moving && !this.isDead) {
+            this.xPos = this.x;
+            this.yPos = this.y;
+            this.moving = true;
 
+            //instead of looking for a newDirection object is this an Opportunity for dependency injection?
+            if (this.newDirection) {
+                this.direction = this.newDirection;
+                this.currentNode = this.newDdirection.node;
+            } else {
+                this.direction = this.findDirection(this.xPos, this.yPos);
+                this.currentNode = this.direction.node;
+            }
+
+            if (this.direction.node[this.direction.letter]) {
+                //Occupy nodes early to prevent creeps from walking into the same node
+                this.direction.node[this.direction.letter].isOccupied = true;
+            }
+            this.step = { x: '+0', y: '+0' };
+            this.shift = { x: 0, y: 0 };
+            switch (this.direction.letter) {
+                case 'n':
+                    this.step.y = '-8';
+                    this.shift.y = -8;
+                    break;
+                case 's':
+                    this.step.y = '+8';
+                    this.shift.y = 8;
+                    break;
+                case 'e':
+                    this.step.x = '+8';
+                    this.shift.x = 8;
+                    break;
+                case 'w':
+                    this.step.x = '-8';
+                    this.shift.x = -8;
+                    break;
+                default:
+                    this.step.x = '+0';
+                    this.step.y = '+0';
+                    break;
+            }
+            
+            if (this.direction.fight) {
+                this.animations.play('fighting');
+                this.direction.node[this.direction.fightLetter].occupant.life -= this.damage;
+                this.tweenFight = game.add.tween(this).to(this.step, this.speed, null, true);
+                this.tweenFight.onComplete.add(this.onFightComplete, this);
+            } else {
+                //Kludgy wrap detection...
+                if (Math.abs(this.direction.x - this.xPos) < 160 && Math.abs(this.direction.y - this.yPos) < 160) {
+                    this.tween1 = game.add.tween(this).to(this.step, this.speed, null, true);
+                    this.tween1.onComplete.add(this.onStepComplete, this);
+                } else {
+                    //World wrap occurs
+                    this.tweenWrap = game.add.tween(this).to(this.step, this.speed, null, true);
+                    this.tweenWrap.onComplete.add(this.onWrapComplete, this);
+                }
+            }
+
+        }
     };
+
+    XRoads.Creep.prototype.onStepComplete = function () {
+        this.tween2 = game.add.tween(this).to(this.step, this.speed, null, true);
+        this.tween2.onComplete.add(this.onDoneComplete, this);
+        if (this.direction.letter) {
+            this.direction.node.isOccupied = false;
+            this.direction.node.occupant = null;
+            this.direction.node[this.direction.letter].occupant = this;
+            this.currentNode = this.direction.node[this.direction.letter];
+        }
+    };
+
+    XRoads.Creep.prototype.onWrapComplete = function () {
+        if (Math.abs(this.direction.x - this.xPos)) {
+            this.x = this.direction.x - this.shift.x;
+        } else {
+            this.y = this.direction.y - this.shift.y;
+        }
+        this.tween2 = game.add.tween(this).to(this.step, this.speed, null, true);
+        this.tween2.onComplete.add(this.onDoneComplete, this);
+        if (this.direction.letter) {
+            this.direction.node.isOccupied = false;
+            this.direction.node.occupant = null;
+        }
+    };
+
+    XRoads.Creep.prototype.onFightComplete = function () {
+        this.tween2 = game.add.tween(this).to(this.step, this.speed, null, true);
+        this.tween2.onComplete.add(this.onDoneComplete, this);
+        if (this.direction.letter) {
+            this.direction.node.isOccupied = false;
+            this.direction.node.occupant = null;
+            this.direction.node[this.direction.letter].occupant = this;
+        }
+    };
+
+    XRoads.Creep.prototype.onDoneComplete = function () {
+        this.moving = false;
+        if (this.life < .1) {
+            this.isDead = true;
+            this.animations.play('death');
+
+            if (this.direction.node[this.direction.letter]) {
+                this.direction.node[this.direction.letter].occupant = null;
+                this.direction.node[this.direction.letter].isOccupied = false;
+            }
+
+            this.tweenDeath = game.add.tween(this).to({ alpha: 0 }, 500, null, true);
+            this.bringToTop();
+            this.tweenDeath.onComplete.add(this.onDeathComplete, this);
+        }
+    };
+
+    XRoads.Creep.prototype.onDeathComplete = function () {
+        this.direction.node.isOccupied = false;
+        this.direction.node.occupant = null;
+        XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, this.direction);
+        if (this.onDeath) {
+            this.onDeath();
+        }
+        this.kill();
+    }
 
     XRoads.Creep.prototype.findDirection = function (x, y) {
         var gridCoords
