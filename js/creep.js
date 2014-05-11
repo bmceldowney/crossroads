@@ -12,6 +12,7 @@
         
         //this.anchor.setTo(.5, .5);
         this.lastDir = { x: null, y: null, letter: null, node: null, lastNode: null };
+        // direction is the next node we want to occupy.
         this.direction = { x: null, y: null, letter: null, node: null, lastNode: null };
         this.moving = false;
         this.isDead = false;
@@ -22,6 +23,8 @@
         this.animations.add('walkLeft', [9, 10, 11, 10], fps, true);
         this.animations.add('fighting', [1, 4, 7, 10], fps, true);
         this.animations.add('death', [0, 4, 8, 9], fps, true);
+
+        this.animTranslate = { e: 'walkRight', w: 'walkLeft', s: 'walkDown', n: 'walkUp' };
 
         this.xPos = 0;
         this.yPos = 0;
@@ -39,10 +42,29 @@
 
     XRoads.Creep.prototype.update = function () {
         this.upkeep();
-        this.move();  
+        if (!this.moving && !this.isDead) {
+            this.xPos = this.x;
+            this.yPos = this.y;
+            this.moving = true;
+            //find next node to move to
+            this.search();
+            //start move sequence
+            this.move();
+        };
     };
     XRoads.Creep.prototype.upkeep = function () {
         game.physics.arcade.overlap(XRoads.CombatPlayer.bullets, this, this.bulletCollisionHandler, null, this);
+    };
+
+    XRoads.Creep.prototype.search = function () {
+        //instead of looking for a newDirection object is this an Opportunity for dependency injection?
+        if (this.newDirection) {
+            this.direction = this.newDirection;
+            this.currentNode = this.newDirection.node;
+        } else {
+            this.direction = this.findDefaultDirection(this.xPos, this.yPos);
+            this.currentNode = this.direction.node;
+        }
     };
 
     XRoads.Creep.prototype.move = function () {
@@ -50,66 +72,50 @@
         //Creeps occupy a node the instant they decide to go there (before tween1). 
         //Creeps leave their node after tween1 completes, or - the moment they leave the old space.
         //Also, 2 steps/tweens helps us with better looking world wrapping.
-        if (!this.moving && !this.isDead) {
-            this.xPos = this.x;
-            this.yPos = this.y;
-            this.moving = true;
-
-            //instead of looking for a newDirection object is this an Opportunity for dependency injection?
-            if (this.newDirection) {
-                this.direction = this.newDirection;
-                this.currentNode = this.newDdirection.node;
+        if (this.direction.node[this.direction.letter]) {
+            //Occupy nodes early to prevent creeps from walking into the same node
+            this.direction.node[this.direction.letter].isOccupied = true;
+        }
+        this.step = { x: '+0', y: '+0' };
+        this.shift = { x: 0, y: 0 };
+        switch (this.direction.letter) {
+            case 'n':
+                this.step.y = '-8';
+                this.shift.y = -8;
+                break;
+            case 's':
+                this.step.y = '+8';
+                this.shift.y = 8;
+                break;
+            case 'e':
+                this.step.x = '+8';
+                this.shift.x = 8;
+                break;
+            case 'w':
+                this.step.x = '-8';
+                this.shift.x = -8;
+                break;
+            default:
+                this.step.x = '+0';
+                this.step.y = '+0';
+                break;
+        }
+        this.animations.play(this.animTranslate[this.direction.letter]);
+        if (this.direction.fight) {
+            this.animations.play('fighting');
+            this.direction.node[this.direction.fightLetter].occupant.life -= this.damage;
+            this.tweenFight = game.add.tween(this).to(this.step, this.speed, null, true);
+            this.tweenFight.onComplete.add(this.onFightComplete, this);
+        } else {
+            //Kludgy wrap detection...
+            if (Math.abs(this.direction.x - this.xPos) < 160 && Math.abs(this.direction.y - this.yPos) < 160) {
+                this.tween1 = game.add.tween(this).to(this.step, this.speed, null, true);
+                this.tween1.onComplete.add(this.onStepComplete, this);
             } else {
-                this.direction = this.findDirection(this.xPos, this.yPos);
-                this.currentNode = this.direction.node;
+                //World wrap occurs
+                this.tweenWrap = game.add.tween(this).to(this.step, this.speed, null, true);
+                this.tweenWrap.onComplete.add(this.onWrapComplete, this);
             }
-
-            if (this.direction.node[this.direction.letter]) {
-                //Occupy nodes early to prevent creeps from walking into the same node
-                this.direction.node[this.direction.letter].isOccupied = true;
-            }
-            this.step = { x: '+0', y: '+0' };
-            this.shift = { x: 0, y: 0 };
-            switch (this.direction.letter) {
-                case 'n':
-                    this.step.y = '-8';
-                    this.shift.y = -8;
-                    break;
-                case 's':
-                    this.step.y = '+8';
-                    this.shift.y = 8;
-                    break;
-                case 'e':
-                    this.step.x = '+8';
-                    this.shift.x = 8;
-                    break;
-                case 'w':
-                    this.step.x = '-8';
-                    this.shift.x = -8;
-                    break;
-                default:
-                    this.step.x = '+0';
-                    this.step.y = '+0';
-                    break;
-            }
-            
-            if (this.direction.fight) {
-                this.animations.play('fighting');
-                this.direction.node[this.direction.fightLetter].occupant.life -= this.damage;
-                this.tweenFight = game.add.tween(this).to(this.step, this.speed, null, true);
-                this.tweenFight.onComplete.add(this.onFightComplete, this);
-            } else {
-                //Kludgy wrap detection...
-                if (Math.abs(this.direction.x - this.xPos) < 160 && Math.abs(this.direction.y - this.yPos) < 160) {
-                    this.tween1 = game.add.tween(this).to(this.step, this.speed, null, true);
-                    this.tween1.onComplete.add(this.onStepComplete, this);
-                } else {
-                    //World wrap occurs
-                    this.tweenWrap = game.add.tween(this).to(this.step, this.speed, null, true);
-                    this.tweenWrap.onComplete.add(this.onWrapComplete, this);
-                }
-            }
-
         }
     };
 
@@ -175,9 +181,8 @@
         this.kill();
     }
 
-    XRoads.Creep.prototype.findDirection = function (x, y) {
-        var gridCoords
-          , animations = {e: 'walkRight', w: 'walkLeft', s: 'walkDown', n: 'walkUp'};
+    XRoads.Creep.prototype.findDefaultDirection = function (x, y) {
+        var gridCoords;
 
         gridCoords = grid.pointToGrid(x, y);
         var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
@@ -186,7 +191,7 @@
         this.lastDir.letter = dir.letter;
         dir.node = node;
         this.lastDir.node = node;
-        this.animations.play(animations[dir.letter]);
+        
 
         return dir;
     };
