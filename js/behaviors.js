@@ -12,7 +12,15 @@ XRoads.Behaviors.prototype = {
 };
 
 XRoads.Behaviors.prototype.upClicked = function () {
-    XRoads.CM._creeps.getAt(0).newDirection = this.goUpCreep(XRoads.CM._creeps.getAt(0));
+    //XRoads.CM._creeps.getAt(0).newDirection = this.goUpCreep(XRoads.CM._creeps.getAt(0));
+    var tempCreep = XRoads.CM._creeps.getRandom();
+    tempCreep.newDirection = true;
+
+    
+    //XRoads.CM._creeps.forEachAlive(function(tempcreep){
+    //    tempCreep.newDirection = true;
+    //}, this);
+    
 }
 
 //
@@ -52,6 +60,9 @@ XRoads.Behaviors.prototype.getAnUpNode = function (node, creep) {
     }
     if (tempNode.isOccupied) {
         tempNode = null;
+    }
+    if (tempNode.isWall) {
+        solved = false;
     }
     var dir = { x: 0, y: 0 };
     if (solved) {

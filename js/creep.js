@@ -59,7 +59,8 @@
     XRoads.Creep.prototype.search = function () {
         //instead of looking for a newDirection object is this an Opportunity for dependency injection?
         if (this.newDirection) {
-            this.direction = this.newDirection;
+            //this.direction = this.newDirection;
+            this.direction = XRoads.Behaviors.goUpCreep(this);
             this.currentNode = this.newDirection.node;
         } else {
             this.direction = this.findDefaultDirection(this.xPos, this.yPos);
