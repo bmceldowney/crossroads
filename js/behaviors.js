@@ -13,13 +13,13 @@ XRoads.Behaviors.prototype = {
 
 XRoads.Behaviors.prototype.upClicked = function () {
     //XRoads.CM._creeps.getAt(0).newDirection = this.goUpCreep(XRoads.CM._creeps.getAt(0));
-    var tempCreep = XRoads.CM._creeps.getRandom();
-    tempCreep.newDirection = true;
+    //var tempCreep = XRoads.CM._creeps.getRandom();
+    //tempCreep.newDirection = true;
 
     
-    //XRoads.CM._creeps.forEachAlive(function(tempcreep){
-    //    tempCreep.newDirection = true;
-    //}, this);
+    XRoads.CM._creeps.forEach(function(tempCreep){
+        tempCreep.newDirection = true;
+    });
     
 }
 
@@ -33,54 +33,113 @@ XRoads.Behaviors.prototype.goUpCreep = function (creep) {
     return dir;
 };
 
-XRoads.Behaviors.prototype.getAnUpNode = function (node, creep) {
+XRoads.Behaviors.prototype.getAnUpNode = function (node, creep, searchDepth) {
+    var destinationNode = null;
     var tempNode = null;
     var letter = null;
     var solved = false;
-    if (!node.n.isWall) {
-        tempNode = node.n;
-        letter = 'n';
-        solved = true;
-    } else if (!node.ne.iswall) {
-        tempNode = node.e;
-        letter = 'e';
-        solved = true;
-    } else if (!node.nw.iswall) {
-        tempNode = node.w;
-        letter = 'w';
-        solved = true;
-    } else if (!node.ne.e.iswall) {
-        tempNode = node.e;
-        letter = 'e';
-        solved = true;
-    } else if (!node.nw.w.iswall) {
-        tempNode = node.w;
-        letter = 'w';
-        solved = true;
-    }
-    if (tempNode.isOccupied) {
-        tempNode = null;
-    }
-    if (tempNode.isWall) {
-        solved = false;
-    }
+    var consider = [];
     var dir = { x: 0, y: 0 };
+    
+    if (creep.wayless < 1) {
+        if (!node.n.isWall) {
+            destinationNode = node.n;
+            letter = 'n';
+            solved = true;
+            if (creep.rut > 0){
+                creep.rut--;
+            }
+        }
+        if (!node.ne.isWall && !node.e.isWall && !node.n.n.isWall) {
+            solved = true;
+            consider.push('e');
+        }
+        if (!node.nw.isWall && !node.w.isWall && !node.n.n.isWall) {
+            solved = true;
+            consider.push('w');
+        }
+        if (node.n.isWall && node.e.isWall) {
+            destinationNode = node.w;
+            letter = 'w';
+            solved = true;
+            creep.bias = -1;
+        }
+        if (node.n.isWall && node.w.isWall) {
+            destinationNode = node.e;
+            letter = 'e';
+            solved = true;
+            creep.bias = 1;
+        }
+        if (node.n.isWall && !node.w.isWall && !node.e.isWall) {
+            if (creep.bias !== 0) {
+                if (creep.bias > 0) {
+                    destinationNode = node.e;
+                    letter = 'e';
+                    solved = true;
+                } else {
+                    destinationNode = node.w;
+                    letter = 'w';
+                    solved = true;
+                }
+                creep.rut++;
+                if (creep.rut > 5) {
+                    creep.rut = 0;
+                    creep.wayless = 15;
+                }
+            } else {
+                return creep.findDefaultDirection(creep.x, creep.y);
+            }
+            
+        }
+        if (node.n.isWall && node.e.isWall && node.w.isWall) {
+            creep.bias = 0;
+            creep.wayless = 9;
+        }
+        /*
+        for (var i = 0; i < searchdepth; i++) {
+            if (!node.ne.e.iswall && !node.e.isWall) {
+                destinationNode = node.e;
+                consider.push('e');
+            }
+            if (!node.nw.w.iswall && !node.w.isWall) {
+                destinationNode = node.w;
+                consider.push('w');
+            }
+        }
+        */
+    } else {
+        creep.wayless--;
+        return creep.findDefaultDirection(creep.x, creep.y);
+    }
+
+    
     if (solved) {
-        if (tempNode) {
-            dir.x = tempNode.xPos;
-            dir.y = tempNode.yPos;
+        if (destinationNode) {
+            dir.x = destinationNode.xPos;
+            dir.y = destinationNode.yPos;
             dir.letter = letter;
             dir.node = node;
-            return dir;
         } else {
-            dir.x = node.xPos;
-            dir.y = node.yPos;
+            letter = consider[Math.floor(Math.random() * consider.length)];
+            destinationNode = node[letter];
+            dir.x = destinationNode.xPos;
+            dir.y = destinationNode.yPos;
             dir.letter = letter;
             dir.node = node;
-            return dir;
         }
     } else {
         return creep.findDefaultDirection(creep.x, creep.y);
+    }
+    if (destinationNode) {
+        if (destinationNode.isOccupied) {
+            if (creep.wannaFight(node, letter)) {
+                return { x: node.xPos, y: node.yPos, letter: null, node: node, fight: true, fightLetter: letter };
+            } else {
+                return creep.randomAvailableFromNode(node);
+            }
+        } else {
+            return dir;
+        }
     }
 
     //var dir = { x: node.n.xPos, y: node.n.yPos, letter: 'n', node: node };

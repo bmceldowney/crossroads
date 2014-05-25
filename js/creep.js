@@ -36,6 +36,12 @@
         this.tween2 = null;
         this.tweenDeath = null;
         this.tweenFight = null;
+
+        //behaviors
+        this.wayless = 0;
+        this.bias = 0;
+        this.rut = 0;
+        this.waypoints = [];
     };
 
     XRoads.Creep.prototype = Object.create(Phaser.Sprite.prototype);
