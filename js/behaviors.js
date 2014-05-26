@@ -31,13 +31,82 @@ XRoads.Behaviors.prototype.goUpCreep = function (creep) {
     var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
     //var node = creep.currentNode;
     
-    var dir = XRoads.Behaviors.getSmartDirectionNode(node, creep, creep.newDirection);
+    var dir = XRoads.Behaviors.getDumbDirectionNode(node, creep, creep.newDirection);
     return dir;
 };
 XRoads.Behaviors.prototype.behaviorError = function (message) {
     this.message = message;
     this.name = "BehaviorError";
 }
+
+XRoads.Behaviors.prototype.getDumbDirectionNode = function (node, creep, directionLetter) {
+    var destinationNode = null,
+        forward = directionLetter,
+        left,
+        right
+        dir = { x: 0, y: 0 };
+    switch (directionLetter) {
+        case 'n':
+            left = 'w';
+            right = 'e';
+            break;
+        case 's':
+            left = 'e';
+            right = 'w';
+            break;
+        case 'e':
+            left = 'n';
+            right = 's';
+            break;
+        case 'w':
+            left = 's';
+            right = 'n';
+            break;
+        default:
+            throw new this.behaviorError("InvalidDirectionLetter");
+            break;
+    }
+    if (!node[forward].isWall) {
+        destinationNode = node[forward];
+        letter = forward;
+    }
+    if (node[forward].isWall && node[right].isWall) {
+        destinationNode = node[left];
+        letter = left;
+    }
+    if (node[forward].isWall && node[left].isWall) {
+        destinationNode = node[right];
+        letter = right;
+    }
+    if (node[forward].isWall && !node[left].isWall && !node[right].isWall) {
+        if (Math.random() < .5) {
+            destinationNode = node[left];
+            letter = left;
+        } else {
+            destinationNode = node[right];
+            letter = right;
+        }
+    }
+
+    if (destinationNode) {
+        dir.x = destinationNode.xPos;
+        dir.y = destinationNode.yPos;
+        dir.letter = letter;
+        dir.node = node;
+    } else {
+        return creep.findDefaultDirection(creep.x, creep.y);
+    }
+    if (destinationNode.isOccupied) {
+        if (creep.wannaFight(node, letter)) {
+            return { x: node.xPos, y: node.yPos, letter: null, node: node, fight: true, fightLetter: letter };
+        } else {
+            return creep.findDefaultDirection(creep.x, creep.y);
+        }
+    } else {
+        return dir;
+    }
+}
+
 /**
 * Searches for a node in a direction(n,s,e,w) and returns a navigatable node that goes that way... eventually.
 *
@@ -51,8 +120,7 @@ XRoads.Behaviors.prototype.behaviorError = function (message) {
                 noWay - If no good navigation solutions have been found recently, we can give up and wander randomly for a while.
 */
 XRoads.Behaviors.prototype.getSmartDirectionNode = function (node, creep, directionLetter) {
-    var newDir = null,
-        destinationNode = null,
+    var destinationNode = null,
         forward = directionLetter,
         left,
         right,
@@ -128,7 +196,7 @@ XRoads.Behaviors.prototype.getSmartDirectionNode = function (node, creep, direct
                 creep.rut++;
                 if (creep.rut > 5) {
                     creep.rut = 0;
-                    creep.wayless = 22;
+                    creep.wayless = 9;
                 }
             } else {
                 if (Math.random() < .5) {

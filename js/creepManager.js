@@ -17,9 +17,9 @@ XRoads.CreepManager.prototype = {
         this._creeps.physicsBodyType = Phaser.Physics.ARCADE;
 
         var type, x, y
-          , types = ['werewolf', 'werewolf', 'vamp', 'mummy', 'catshroom', 'frank', 'swamp'];
+          , types = ['werewolf'];//, 'werewolf', 'vamp', 'mummy', 'catshroom', 'frank', 'swamp'];
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 60; i++) {
             type = types[Math.floor(Math.random() * types.length)];
             getStartingLocation();
 
