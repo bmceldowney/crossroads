@@ -67,7 +67,7 @@
         if (this.newDirection) {
             //this.direction = this.newDirection;
             this.direction = XRoads.Behaviors.goUpCreep(this);
-            this.currentNode = this.newDirection.node;
+            this.currentNode = this.direction.node;
         } else {
             this.direction = this.findDefaultDirection(this.xPos, this.yPos);
             this.currentNode = this.direction.node;
@@ -181,6 +181,7 @@
     XRoads.Creep.prototype.onDeathComplete = function () {
         this.direction.node.isOccupied = false;
         this.direction.node.occupant = null;
+        //this.currentNode = XRoads.GridNodes.getNodeFromPos(this.x, this.y);
         XRoads.Map.replaceTile(XRoads.CombatMap, XRoads.CombatMap.WallLayer, 13, this.direction);
         if (this.onDeath) {
             this.onDeath();

@@ -84,10 +84,23 @@ XRoads.Behaviors.prototype.getAnUpNode = function (node, creep, searchDepth) {
                 creep.rut++;
                 if (creep.rut > 5) {
                     creep.rut = 0;
-                    creep.wayless = 15;
+                    creep.wayless = 22;
                 }
             } else {
-                return creep.findDefaultDirection(creep.x, creep.y);
+                if (Math.random() < .5) {
+                    destinationNode = node.w;
+                    letter = 'w';
+                    solved = true;
+                    creep.bias = -1;
+                } else {
+                    destinationNode = node.e;
+                    letter = 'e';
+                    solved = true;
+                    creep.bias = 1;
+                }
+
+                //return creep.findDefaultDirection(creep.x, creep.y);
+                //return creep.randomAvailableFromNode(node);
             }
             
         }
