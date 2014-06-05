@@ -5,8 +5,8 @@ XRoads.Map = {};
 
     XRoads.Map.preload = function (_game) {
         game = _game;
-        game.load.tilemap('map', 'assets/map.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tiles', 'assets/tiles-1.png');
+        game.load.tilemap('map', 'assets/bloobs.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('tiles', 'assets/simple_colors.png');
     };
 
     XRoads.Map.create = function () {

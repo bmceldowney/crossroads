@@ -7,7 +7,7 @@ XRoads.Behaviors.prototype = {
         this.game.load.spritesheet('upcreep', 'assets/upcreep_button.png', 150, 75);
     },
     create: function () {
-        this.game.add.button(this.game.world.centerX - 175, 425, 'upcreep', this.upClicked, this, 2, 1, 0);
+        this.game.add.button(this.game.world.centerX - 175, this.game.world.height - 100, 'upcreep', this.upClicked, this, 2, 1, 0);
     }
 };
 
@@ -31,7 +31,7 @@ XRoads.Behaviors.prototype.goUpCreep = function (creep) {
     var node = XRoads.GridNodes.getNodeFromCoords(gridCoords.x, gridCoords.y);
     //var node = creep.currentNode;
     
-    var dir = XRoads.Behaviors.getDumbDirectionNode(node, creep, creep.newDirection);
+    var dir = XRoads.Behaviors.getSmartDirectionNode(node, creep, creep.newDirection);
     return dir;
 };
 XRoads.Behaviors.prototype.behaviorError = function (message) {
@@ -222,129 +222,10 @@ XRoads.Behaviors.prototype.getSmartDirectionNode = function (node, creep, direct
         return creep.findDefaultDirection(creep.x, creep.y);
     }
 
-    
-    if (solved) {
-        if (destinationNode) {
-            dir.x = destinationNode.xPos;
-            dir.y = destinationNode.yPos;
-            dir.letter = letter;
-            dir.node = node;
-        } else {
-            letter = consider[Math.floor(Math.random() * consider.length)];
-            destinationNode = node[letter];
-            dir.x = destinationNode.xPos;
-            dir.y = destinationNode.yPos;
-            dir.letter = letter;
-            dir.node = node;
-        }
-    } else {
-        return creep.findDefaultDirection(creep.x, creep.y);
-    }
-    if (destinationNode) {
-        if (destinationNode.isOccupied) {
-            if (creep.wannaFight(node, letter)) {
-                return { x: node.xPos, y: node.yPos, letter: null, node: node, fight: true, fightLetter: letter };
-            } else {
-                return creep.randomAvailableFromNode(node);
-            }
-        } else {
-            return dir;
-        }
-    }
-}
-XRoads.Behaviors.prototype.getAnUpNode = function (node, creep, searchDepth) {
-    var destinationNode = null;
-    var tempNode = null;
-    var letter = null;
-    var solved = false;
-    var consider = [];
-    var dir = { x: 0, y: 0 };
-    
-    if (creep.wayless < 1) {
-        if (!node.n.isWall) {
-            destinationNode = node.n;
-            letter = 'n';
-            solved = true;
-            if (creep.rut > 0){
-                creep.rut--;
-            }
-        }
-        if (!node.ne.isWall && !node.e.isWall && !node.n.n.isWall) {
-            solved = true;
-            consider.push('e');
-        }
-        if (!node.nw.isWall && !node.w.isWall && !node.n.n.isWall) {
-            solved = true;
-            consider.push('w');
-        }
-        if (node.n.isWall && node.e.isWall) {
-            destinationNode = node.w;
-            letter = 'w';
-            solved = true;
-            creep.bias = -1;
-        }
-        if (node.n.isWall && node.w.isWall) {
-            destinationNode = node.e;
-            letter = 'e';
-            solved = true;
-            creep.bias = 1;
-        }
-        if (node.n.isWall && !node.w.isWall && !node.e.isWall) {
-            if (creep.bias !== 0) {
-                if (creep.bias > 0) {
-                    destinationNode = node.e;
-                    letter = 'e';
-                    solved = true;
-                } else {
-                    destinationNode = node.w;
-                    letter = 'w';
-                    solved = true;
-                }
-                creep.rut++;
-                if (creep.rut > 5) {
-                    creep.rut = 0;
-                    creep.wayless = 22;
-                }
-            } else {
-                if (Math.random() < .5) {
-                    destinationNode = node.w;
-                    letter = 'w';
-                    solved = true;
-                    creep.bias = -1;
-                } else {
-                    destinationNode = node.e;
-                    letter = 'e';
-                    solved = true;
-                    creep.bias = 1;
-                }
-
-                //return creep.findDefaultDirection(creep.x, creep.y);
-                //return creep.randomAvailableFromNode(node);
-            }
-            
-        }
-        if (node.n.isWall && node.e.isWall && node.w.isWall) {
-            creep.bias = 0;
-            creep.wayless = 9;
-        }
-        /*
+    /*
         for (var i = 0; i < searchdepth; i++) {
-            if (!node.ne.e.iswall && !node.e.isWall) {
-                destinationNode = node.e;
-                consider.push('e');
-            }
-            if (!node.nw.w.iswall && !node.w.isWall) {
-                destinationNode = node.w;
-                consider.push('w');
-            }
         }
-        */
-    } else {
-        creep.wayless--;
-        return creep.findDefaultDirection(creep.x, creep.y);
-    }
-
-    
+    */
     if (solved) {
         if (destinationNode) {
             dir.x = destinationNode.xPos;
@@ -373,7 +254,4 @@ XRoads.Behaviors.prototype.getAnUpNode = function (node, creep, searchDepth) {
             return dir;
         }
     }
-
-    //var dir = { x: node.n.xPos, y: node.n.yPos, letter: 'n', node: node };
-    //return dir;
 }
