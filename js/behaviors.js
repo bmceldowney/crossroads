@@ -7,7 +7,7 @@ XRoads.Behaviors.prototype = {
         this.game.load.spritesheet('upcreep', 'assets/upcreep_button.png', 150, 75);
     },
     create: function () {
-        this.game.add.button(this.game.world.centerX - 175, this.game.world.height - 100, 'upcreep', this.upClicked, this, 2, 1, 0);
+        this.game.add.button(this.game.world.centerX - 175, this.game.world.height - 80, 'upcreep', this.upClicked, this, 2, 1, 0);
     }
 };
 
