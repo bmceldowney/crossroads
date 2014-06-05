@@ -17,6 +17,7 @@
         };
 
         this.create = function () {
+            this.preload();
             this.speed = 150;
             this.stepDistance = 2;
             var fps = (5 + 11) - Math.floor((((this.speed - 200) / 500) * 6) + 5);
