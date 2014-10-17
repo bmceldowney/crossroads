@@ -66,11 +66,12 @@
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
                 }
-            };
+            }
+
             function onDoneComplete() {
-                
                 this.moving = false;
-            };
+            }
+
             function onWrapComplete() {
                 if (Math.abs(dir.x - x)) {
                     this.sprite.x = dir.x - shift.x;
@@ -82,7 +83,7 @@
                 if (dir.letter) {
                     dir.currentNode.isOccupied = false;
                 }
-            };
+            }
 
             //Kludgy wrap detection...
             if (Math.abs(dir.x - x) < 160 && Math.abs(dir.y - y) < 160) {

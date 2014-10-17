@@ -3,7 +3,7 @@ XRoads.easystar = new EasyStar.js();
 
 //global variables
 window.onload = function () {
-    var game = XRoads.game = new Phaser.Game(624, 368, Phaser.AUTO, 'game');
+    var game = XRoads.game = new Phaser.Game(960, 640, Phaser.AUTO, 'game');
 
     // Game States
     game.state.add('boot', XRoads.Boot);
