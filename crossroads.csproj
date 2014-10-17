@@ -57,6 +57,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="3rdparty\easystar-0.1.6.js" />
+    <Content Include="3rdparty\easystar.js" />
+    <Content Include="3rdparty\phaser.js" />
     <Content Include="assets\map.json" />
     <Content Include="assets\map.tmx" />
     <None Include="Web.Debug.config">
@@ -67,9 +70,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="3rd party\easystar-0.1.6.js" />
-    <Content Include="3rd party\easystar.js" />
-    <Content Include="3rd party\phaser.js" />
     <Content Include="assets\frank.png" />
     <Content Include="assets\mummy.png" />
     <Content Include="assets\swamp.png" />
@@ -78,12 +78,15 @@
     <Content Include="assets\werewolf.png" />
     <Content Include="css\game.css" />
     <Content Include="index.html" />
-    <Content Include="js\creep.js" />
+    <Content Include="js\behaviors.js" />
+    <Content Include="js\combatPlayer.js" />
+    <Content Include="js\creep.js.bak.js" />
     <Content Include="js\creepManager.js" />
     <Content Include="js\game.js" />
     <Content Include="js\grid.js" />
     <Content Include="js\gridNodes.js" />
     <Content Include="js\map.js" />
+    <Content Include="js\playerBullet.js" />
     <Content Include="js\states\boot.js" />
     <Content Include="js\states\combat.js" />
     <Content Include="js\states\menu.js" />

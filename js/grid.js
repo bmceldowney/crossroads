@@ -11,8 +11,8 @@ XRoads.Grid = {};
 
     XRoads.Grid.create = function (_game) {
         game = _game;
-        columns = game.world.width / tileWidth;
-        rows = game.world.height / tileHeight;
+        columns = XRoads.CombatMap.width;
+        rows = XRoads.CombatMap.height;
     };
 
     XRoads.Grid.update = function () {

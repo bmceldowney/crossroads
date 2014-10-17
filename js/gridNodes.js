@@ -17,6 +17,8 @@
             nodes[i].id = i;
             nodes[i].xPos = (i % w) * size;
             nodes[i].yPos = Math.floor(i / w) * size;
+            nodes[i].column = (i % w);
+            nodes[i].row = Math.floor(i / w);
         }
         //Add reference to next, prev, n(orth), s(outh), e(ast), w(est)
         for (var j = 0; j < a; j++) {
@@ -96,6 +98,15 @@
     XRoads.GridNodes.getNodeFromCoords = function (x, y) {
         return nodes[(y * width) + x];
     };
+    XRoads.GridNodes.getNodeFromPos = function (x, y) {
+        var gp = XRoads.Grid.pointToGrid(x, y);
+        //What? why -.0001? why?
+        if (x > XRoads.CombatMap.widthInPixels - .0001 || x < 0) {
+            return null;
+        } else {
+            return nodes[(gp.y * width) + gp.x];
+        }
+    };
 
     XRoads.GridNodes.isLocked = function (nn) {
         return (!nodes[nn].n.isWall && !nodes[nn].s.isWall && !nodes[nn].e.isWall && !nodes[nn].w.isWall);
@@ -103,64 +114,6 @@
 
     XRoads.GridNodes.randomAvailableFromNodeNumber = function (nn) {
         return XRoads.GridNodes.randomAvailableFromNode(nodes[nn]);
-    };
-
-    XRoads.GridNodes.randomAvailableFromNode = function (node) {
-        var directions = [];
-        var dLetter = [];
-        var m = 0;
-
-        if (!node.n.isWall && !node.n.isOccupied) {
-            directions.push(node.n);
-            dLetter.push('n');
-            m++;
-        }
-        if (!node.s.isWall && !node.s.isOccupied) {
-            directions.push(node.s);
-            dLetter.push('s');
-            m++;
-        }
-        if (!node.e.isWall && !node.e.isOccupied) {
-            directions.push(node.e);
-            dLetter.push('e');
-            m++;
-        }
-        if (!node.w.isWall && !node.w.isOccupied) {
-            directions.push(node.w);
-            dLetter.push('w');
-            m++;
-        }
-        
-        if (m === 0) {
-            //No where to go. Stay put
-            return { x: node.xPos, y: node.yPos, letter: null, currentNode: node };
-        } else {
-            //Math.random() will never return 1;
-            var r = Math.floor(Math.random() * m);
-
-            var dir = { x: 0, y: 0 };
-            dir.x = directions[r].xPos;
-            dir.y = directions[r].yPos;
-            dir.letter = dLetter[r];
-            dir.currentNode = node;
-            return dir;
-        }
-    };
-
-    XRoads.GridNodes.walkFromNodeToLetter = function (node, letter) {
-        if (!letter) {
-            return XRoads.GridNodes.randomAvailableFromNode(node);
-        }
-        if (!node[letter].isWall && !node[letter].isOccupied && Math.random() * 16 < 15) {
-            var dir = { x: 0, y: 0 };
-            dir.x = node[letter].xPos;
-            dir.y = node[letter].yPos;
-            dir.letter = letter;
-            dir.currentNode = node;
-            return dir;
-        } else {
-            return XRoads.GridNodes.randomAvailableFromNode(node);
-        }
     };
 
 
