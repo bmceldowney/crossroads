@@ -1,9 +1,7 @@
-/.DS_Store
-/bin
-/obj/Debug
-/crossroads.v12.suo
-/crossroads.csproj.user
-/Web.Debug.config
-/Web.Release.config
-/node_modules
-out
+node_modules
+*.log
+orig
+bower_components
+dist
+*.sublime*
+.DS*
