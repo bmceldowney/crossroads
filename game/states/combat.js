@@ -2,6 +2,7 @@
 var behaviors = require('./services/behaviorService');
 
 function Combat() {}
+
 function changeDirectionClicked() {
   behaviors.massDirectionShift(this.creepManager._creeps);
 }
