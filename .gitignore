@@ -1,6 +1,5 @@
 node_modules
 *.log
-orig
 bower_components
 dist
 .DS*

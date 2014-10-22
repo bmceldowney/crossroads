@@ -1,0 +1,20 @@
+"use strict";
+XRoads.easystar = new EasyStar.js();
+
+//global variables
+window.onload = function () {
+<<<<<<< HEAD
+    var game = XRoads.game = new Phaser.Game(960, 640, Phaser.AUTO, 'game');
+=======
+    var game = XRoads.game = new Phaser.Game(992, 825, Phaser.AUTO, 'game');
+>>>>>>> b35c8c7cb93a6fc5acda5f001cda4ef362192d87
+
+    // Game States
+    game.state.add('boot', XRoads.Boot);
+    game.state.add('world', XRoads.World);
+    game.state.add('menu', XRoads.Menu);
+    game.state.add('combat', XRoads.Combat);
+    // game.state.add('preload', require('./js/states/preload'));
+
+    game.state.start('menu');
+};
