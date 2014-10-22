@@ -1,0 +1,21 @@
+{
+    "folders":
+    [
+        {
+                "path": ".",
+                "folder_exclude_patterns": ["node_modules", "dist"],
+                "file_exclude_patterns": [
+                    "*.sublime-*", 
+                    "*.wksp", 
+                    "*.csproj",
+                    "*.sln",
+                    "q",
+                    "Web.config",
+                    "orig/**/*.js.orig",
+                    "orig/**/behaviors",
+                    "orig/**/grid.js",
+                    "orig/**/states"
+                ]
+        }
+    ]
+}

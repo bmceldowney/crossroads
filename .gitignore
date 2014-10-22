@@ -3,5 +3,4 @@ node_modules
 orig
 bower_components
 dist
-*.sublime*
 .DS*
