@@ -1,6 +1,7 @@
 'use strict';
 var Node = require('../models/Node.js');
 var Grid = require('../models/Grid.js');
+var Collider = require('../models/MapCollider.js');
 
 var mapGridGenerator = {};
 
@@ -73,6 +74,8 @@ mapGridGenerator.generate = function (width, height, size) {
 
   buildNodes(grid);
   linkNodes(grid);
+  grid.collider = new 
+
   addWalls(grid);
   
   
