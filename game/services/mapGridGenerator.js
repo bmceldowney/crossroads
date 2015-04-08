@@ -69,15 +69,25 @@ function addWalls(grid) {
   }
 }
 
-mapGridGenerator.generate = function (width, height, size) {
-  var grid = new Grid(width, height, size);
+function validateOptions(options) {
+  return options &&
+         options.width &&
+         options.height &&
+         options.size &&
+         options.collisionLayer &&
+         options.acceptableTiles;
+}
+
+mapGridGenerator.generate = function (options) {
+  if (!validateOptions(options)) { throw new Error(); }
+
+  var grid = new Grid(options.width, options.height, options.size);
 
   buildNodes(grid);
   linkNodes(grid);
-  grid.collider = new 
 
+  grid.collider = new Collider(options.collisionLayer, options.acceptableTiles);
   addWalls(grid);
-  
   
   return grid;
 };

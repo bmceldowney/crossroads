@@ -8,7 +8,16 @@ function Grid(width, height, size) {
   this.nodeCount = width * height;
 }
 
-Grid.prototype = {};
+Grid.prototype.getColumns = function () {
+  console.log('Grid.prototype.getColumns is deprecated. Use Grid.width instead.');
+  return this.width;
+  
+};
+
+Grid.prototype.getRows = function () {
+  console.log('Grid.prototype.getRows is deprecated. Use Grid.height instead.');
+  return this.height;
+};
 
 Grid.prototype.isLocked = function (nn) {
   return (!this.nodes[nn].n.isWall && !this.nodes[nn].s.isWall && !this.nodes[nn].e.isWall && !this.nodes[nn].w.isWall);
@@ -19,6 +28,8 @@ Grid.prototype.getNodeFromCoords = function (x, y) {
 };
 
 Grid.prototype.getNodeFromPos = function (x, y) {
+
+  // NOTE: revisit
   var gp = this.pointToGrid(x, y);
   //What? why -.0001? why?
   if (x > XRoads.CombatMap.widthInPixels - 0.0001 || x < 0) {

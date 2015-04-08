@@ -3,6 +3,9 @@
 //global variables
 window.onload = function () {
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'crossroads');
+  
+  // make the game object available
+  require('./services/gameService').register(game);
 
   // Game States
   game.state.add('boot', require('./states/boot'));

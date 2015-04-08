@@ -1,5 +1,8 @@
 'use strict';
-var behaviors = require('./services/behaviorService');
+var behaviors = require('../services/behaviorService');
+var gridGenerator = require('../services/mapGridGenerator')
+var CreepManager = require('../data/CreepManager')
+var grid;
 
 function Combat() {}
 
@@ -9,8 +12,10 @@ function changeDirectionClicked() {
 
 Combat.prototype = {
   preload: function () {
-    XRoads.Map.preload(this.game);
-    XRoads.CM = this.creepManager = new XRoads.CreepManager(this.game);
+    game.load.tilemap('map', 'assets/bloobs.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('tiles', 'assets/simple_colors.png');
+
+    // OLD //
     XRoads.CombatPlayer = new CombatPlayer(this.game);
     XRoads.CombatPlayer.preload();
 
@@ -18,9 +23,26 @@ Combat.prototype = {
   },
 
   create: function () {
-    XRoads.Map.create();
-    XRoads.Grid.create(this.game);
-    XRoads.GridNodes.create(XRoads.Grid.getColumns(), XRoads.Grid.getRows(), 16);
+    var tileMap;
+    var wallLayer;
+    var mapOptions;
+    
+    // MAP CREATION //
+    tilemap = game.add.tilemap('map');
+    tilemap.addTilesetImage('dirt', 'tiles');
+    wallLayer = tilemap.createLayer('Tile Layer 1');
+    mapOptions = {
+      width: tilemap.height,
+      height: tilemap.width,
+      size: tilemap.tileHeight,
+      collisionLayer: wallLayer,
+      acceptableTiles: [0]
+    }
+
+    grid = gridGenerator.generate(mapOptions);
+
+
+    // OLD //
     this.creepManager.populate();
     XRoads.CombatPlayer.create();
 
@@ -35,13 +57,11 @@ Combat.prototype = {
   },
 
   update: function () {
+    grid.collider.tick();
     XRoads.CombatPlayer.update();
   },
   paused: function () {
     // This method will be called when game paused.
-  },
-  render: function () {
-    // Put render operations here.
   },
   shutdown: function () {
     // This method will be called when the state is shut down 
